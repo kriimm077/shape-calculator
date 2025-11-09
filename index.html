@@ -3,284 +3,236 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Maxima & Minima in Real Life — Krima’s Project</title>
+  <title>Shape Surface Area Optimizer</title>
   <style>
     body {
-      margin: 0;
       font-family: "Poppins", sans-serif;
-      background-color: #1c1c1c;
-      color: #f0f0f0;
-      display: flex;
-      height: 100vh;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      width: 220px;
-      background: linear-gradient(180deg, #242424, #0e0e0e);
-      padding: 20px 0;
+      background: linear-gradient(135deg, #e3f2fd, #fce4ec);
       display: flex;
       flex-direction: column;
+      justify-content: center;
       align-items: center;
-      border-right: 1px solid #333;
+      min-height: 100vh;
+      margin: 0;
+      color: #333;
     }
 
-    .sidebar h2 {
-      margin-bottom: 25px;
-      font-size: 1.1rem;
-      color: #fff;
-    }
-
-    .tab-btn {
-      background: none;
-      border: none;
-      color: #ccc;
-      font-size: 1rem;
-      padding: 12px 20px;
-      text-align: left;
-      width: 100%;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .tab-btn:hover, .tab-btn.active {
-      background: #333;
-      color: #fff;
-    }
-
-    /* Main content */
-    .content {
-      flex-grow: 1;
+    .container {
+      background: white;
       padding: 40px;
-      background: #1c1c1c;
-      overflow-y: auto;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      width: 400px;
+      text-align: center;
+      transition: transform 0.3s ease;
     }
 
-    .tab-content {
-      display: none;
-      animation: fadeIn 0.4s ease;
+    .container:hover {
+      transform: translateY(-4px);
     }
 
-    .tab-content.active {
-      display: block;
+    h2 {
+      color: #1976d2;
+      margin-bottom: 15px;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Cards */
-    .card {
-      background: #2a2a2a;
-      border-radius: 12px;
-      padding: 25px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-      max-width: 500px;
-    }
-
-    .card h3 {
-      margin-top: 0;
-      color: #fff;
-    }
-
-    input, select, button {
-      background: #333;
-      color: #fff;
-      border: 1px solid #555;
-      border-radius: 8px;
+    select, input, button {
+      width: 90%;
       padding: 10px;
-      width: 100%;
-      margin: 8px 0;
+      margin: 10px 0;
+      border-radius: 10px;
+      border: 1px solid #bbb;
+      font-size: 1em;
     }
 
     button {
-      cursor: pointer;
-      background: #3b82f6;
+      background-color: #1976d2;
+      color: white;
       border: none;
-      transition: 0.3s;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
 
     button:hover {
-      background: #2563eb;
+      background-color: #125aa0;
+    }
+
+    .result {
+      margin-top: 25px;
+      background: #f7faff;
+      border-radius: 12px;
+      padding: 15px;
+      text-align: left;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+      animation: fadeIn 0.5s ease;
+    }
+
+    .result h3 {
+      color: #1976d2;
+      border-bottom: 1px solid #d0e2ff;
+      padding-bottom: 6px;
+    }
+
+    .data-line {
+      margin: 6px 0;
+      font-size: 15px;
+    }
+
+    .highlight {
+      font-weight: 600;
+      color: #0078d4;
     }
 
     footer {
+      margin-top: 25px;
       text-align: center;
-      color: #777;
-      font-size: 0.9rem;
-      margin-top: 40px;
+      color: #555;
+      font-size: 14px;
+      font-style: italic;
     }
 
-    #map {
-      height: 400px;
-      width: 100%;
-      border-radius: 12px;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>Maxima & Minima</h2>
-    <button class="tab-btn active" data-tab="shapes">Shapes</button>
-    <button class="tab-btn" data-tab="crops">Crops</button>
-    <button class="tab-btn" data-tab="economics">Economics</button>
-    <button class="tab-btn" data-tab="maps">Maps</button>
+  <div class="container">
+    <h2>🔹 Minimum Surface Area Calculator</h2>
+    <label for="shape">Select Shape:</label>
+    <select id="shape">
+      <option value="">--Select--</option>
+      <option value="cube">Cube</option>
+      <option value="cuboid">Cuboid</option>
+      <option value="cylinder">Cylinder</option>
+      <option value="sphere">Sphere</option>
+      <option value="cone">Cone</option>
+      <option value="hemisphere">Hemisphere</option>
+      <option value="squarePyramid">Square Pyramid</option>
+      <option value="rectPrism">Rectangular Prism</option>
+      <option value="triangularPrism">Triangular Prism</option>
+      <option value="torus">Torus</option>
+    </select>
+
+    <label for="volume">Enter Volume (in cm³):</label>
+    <input type="number" id="volume" placeholder="e.g. 100" />
+
+    <button onclick="calculate()">Calculate</button>
+
+    <div id="output" class="result"></div>
   </div>
 
-  <div class="content">
-    <!-- Shapes Tab -->
-    <div id="shapes" class="tab-content active">
-      <div class="card">
-        <h3>Shape Calculator</h3>
-        <select id="shapeType">
-          <option value="cube">Cube</option>
-          <option value="sphere">Sphere</option>
-          <option value="cylinder">Cylinder</option>
-        </select>
-        <input type="number" id="value1" placeholder="Enter value (side/radius)" />
-        <input type="number" id="value2" placeholder="Height (for cylinder only)" />
-        <button id="calcShape">Calculate</button>
-        <p id="shapeResult"></p>
-      </div>
-    </div>
-
-    <!-- Crops Tab -->
-    <div id="crops" class="tab-content">
-      <div class="card">
-        <h3>Crop Yield Optimization</h3>
-        <input type="number" id="fertilizer" placeholder="Fertilizer (kg)" />
-        <button id="calcCrops">Calculate Yield</button>
-        <p id="cropResult"></p>
-      </div>
-    </div>
-
-    <!-- Economics Tab -->
-    <div id="economics" class="tab-content">
-      <div class="card">
-        <h3>Profit Maximization</h3>
-        <input type="number" id="price" placeholder="Price per unit" />
-        <input type="number" id="cost" placeholder="Cost per unit" />
-        <input type="number" id="quantity" placeholder="Quantity sold" />
-        <button id="calcEco">Calculate Profit</button>
-        <p id="ecoResult"></p>
-      </div>
-    </div>
-
-    <!-- Maps Tab -->
-    <div id="maps" class="tab-content">
-      <div class="card">
-        <h3>Shortest Distance Map</h3>
-        <select id="start">
-          <option value="">Select start</option>
-          <option value="Ahmedabad">Ahmedabad</option>
-          <option value="Baroda">Baroda</option>
-          <option value="Surat">Surat</option>
-          <option value="Rajkot">Rajkot</option>
-        </select>
-        <select id="end">
-          <option value="">Select destination</option>
-          <option value="Ahmedabad">Ahmedabad</option>
-          <option value="Baroda">Baroda</option>
-          <option value="Surat">Surat</option>
-          <option value="Rajkot">Rajkot</option>
-        </select>
-        <button id="showRoute">Show Route</button>
-        <div id="map"></div>
-      </div>
-    </div>
-
-    <footer>2025 © Krima Engineering Mathematics Project</footer>
-  </div>
+  <footer>2025 @ Krima engineering mathematics project.</footer>
 
   <script>
-    window.onload = function() {
-      // TAB SWITCHING
-      const tabs = document.querySelectorAll(".tab-btn");
-      const contents = document.querySelectorAll(".tab-content");
+    function calculate() {
+      const shape = document.getElementById('shape').value;
+      const volume = parseFloat(document.getElementById('volume').value);
+      const output = document.getElementById('output');
+      output.innerHTML = "";
 
-      tabs.forEach(btn => {
-        btn.addEventListener("click", () => {
-          tabs.forEach(b => b.classList.remove("active"));
-          btn.classList.add("active");
-          const target = btn.getAttribute("data-tab");
-          contents.forEach(c => c.classList.remove("active"));
-          document.getElementById(target).classList.add("active");
-        });
-      });
-
-      // SHAPE CALCULATION
-      document.getElementById("calcShape").addEventListener("click", () => {
-        const shape = document.getElementById("shapeType").value;
-        const v1 = parseFloat(document.getElementById("value1").value);
-        const v2 = parseFloat(document.getElementById("value2").value);
-        let result = "";
-        if (shape === "cube") {
-          result = Volume: ${(v1 ** 3).toFixed(2)} | Surface Area: ${(6 * v1 ** 2).toFixed(2)};
-        } else if (shape === "sphere") {
-          result = Volume: ${((4/3) * Math.PI * v1 ** 3).toFixed(2)} | Surface Area: ${(4 * Math.PI * v1 ** 2).toFixed(2)};
-        } else if (shape === "cylinder") {
-          result = Volume: ${(Math.PI * v1 ** 2 * v2).toFixed(2)} | Surface Area: ${(2 * Math.PI * v1 * (v1 + v2)).toFixed(2)};
-        }
-        document.getElementById("shapeResult").textContent = result;
-      });
-
-      // CROPS
-      document.getElementById("calcCrops").addEventListener("click", () => {
-        const f = parseFloat(document.getElementById("fertilizer").value);
-        const yieldVal = -(f - 50) ** 2 / 25 + 100; // parabolic max around f=50
-        document.getElementById("cropResult").textContent = Optimal yield: ${yieldVal.toFixed(2)} units;
-      });
-
-      // ECONOMICS
-      document.getElementById("calcEco").addEventListener("click", () => {
-        const p = parseFloat(document.getElementById("price").value);
-        const c = parseFloat(document.getElementById("cost").value);
-        const q = parseFloat(document.getElementById("quantity").value);
-        const profit = (p - c) * q;
-        document.getElementById("ecoResult").textContent = Profit: ₹${profit.toFixed(2)};
-      });
-
-      // MAPS
-      let map, directionsService, directionsRenderer;
-
-      function initMap() {
-        map = new google.maps.Map(document.getElementById("map"), {
-          center: { lat: 22.3072, lng: 73.1812 },
-          zoom: 7,
-        });
-        directionsService = new google.maps.DirectionsService();
-        directionsRenderer = new google.maps.DirectionsRenderer();
-        directionsRenderer.setMap(map);
+      if (!shape || !volume || volume <= 0) {
+        output.innerHTML = "<p style='color:red;'>⚠ Please select a shape and enter a valid volume.</p>";
+        return;
       }
-      window.initMap = initMap;
 
-      document.getElementById("showRoute").addEventListener("click", () => {
-        const start = document.getElementById("start").value;
-        const end = document.getElementById("end").value;
-        if (!start || !end) {
-          alert("Please select both locations.");
-          return;
-        }
-        directionsService.route(
-          {
-            origin: start,
-            destination: end,
-            travelMode: google.maps.TravelMode.DRIVING,
-          },
-          (response, status) => {
-            if (status === "OK") {
-              directionsRenderer.setDirections(response);
-            } else {
-              alert("Route not found: " + status);
-            }
-          }
-        );
-      });
-    };
+      let html = "";
+
+      if (shape === "cube") {
+        const a = Math.cbrt(volume);
+        const sa = 6 * a * a;
+        html = `<h3>Shape: Cube</h3>
+                <div class="data-line">Side = <span class="highlight">${a.toFixed(2)} cm</span></div>
+                <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
+                <p>💡 For the same volume, a <b>sphere</b> would use even less material.</p>`;
+      } 
+      else if (shape === "cuboid") {
+        const a = Math.cbrt(volume);
+        const sa = 6 * a * a;
+        html = `<h3>Shape: Cuboid</h3>
+                <div class="data-line">Optimal Dimensions (L=W=H) = <span class="highlight">${a.toFixed(2)} cm</span></div>
+                <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
+                <p>📦 When all sides are equal, a cuboid becomes a cube for minimal SA.</p>`;
+      } 
+      else if (shape === "cylinder") {
+        const r = Math.cbrt(volume / (2 * Math.PI));
+        const h = 2 * r;
+        const sa = 2 * Math.PI * r * (r + h);
+        html = `<h3>Shape: Cylinder</h3>
+                <div class="data-line">Radius = <span class="highlight">${r.toFixed(2)} cm</span></div>
+                <div class="data-line">Height = <span class="highlight">${h.toFixed(2)} cm</span></div>
+                <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
+                <p>🥫 A sphere of same volume would have lesser surface area than a cylinder.</p>`;
+      } 
+      else if (shape === "sphere") {
+        const r = Math.cbrt((3 * volume) / (4 * Math.PI));
+        const sa = 4 * Math.PI * r * r;
+        html = `<h3>Shape: Sphere</h3>
+                <div class="data-line">Radius = <span class="highlight">${r.toFixed(2)} cm</span></div>
+                <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
+                <p>🌍 A sphere has the least surface area for a given volume — it’s the most efficient shape!</p>`;
+      } 
+      else if (shape === "cone") {
+        const r = Math.cbrt((3 * volume) / (Math.PI * Math.sqrt(4)));
+        const h = Math.sqrt(3) * r;
+        const l = Math.sqrt(r * r + h * h);
+        const sa = Math.PI * r * (r + l);
+        html = `<h3>Shape: Cone</h3>
+                <div class="data-line">Radius = <span class="highlight">${r.toFixed(2)} cm</span></div>
+                <div class="data-line">Height = <span class="highlight">${h.toFixed(2)} cm</span></div>
+                <div class="data-line">Slant Height = <span class="highlight">${l.toFixed(2)} cm</span></div>
+                <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
+                <p>🍦 A sphere has less SA than a cone for the same volume.</p>`;
+      } 
+      else if (shape === "hemisphere") {
+        const r = Math.cbrt((3 * volume) / (2 * Math.PI));
+        const sa = 3 * Math.PI * r * r;
+        html = `<h3>Shape: Hemisphere</h3>
+                <div class="data-line">Radius = <span class="highlight">${r.toFixed(2)} cm</span></div>
+                <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
+                <p>🌗 Half of a sphere — slightly less efficient than a full sphere.</p>`;
+      }
+      else if (shape === "squarePyramid") {
+        const a = Math.cbrt(volume); 
+        const h = a; 
+        const sa = a * a + 2 * a * Math.sqrt((a / 2) ** 2 + h ** 2);
+        html = `<h3>Shape: Square Pyramid</h3>
+                <div class="data-line">Base Side = <span class="highlight">${a.toFixed(2)} cm</span></div>
+                <div class="data-line">Height = <span class="highlight">${h.toFixed(2)} cm</span></div>
+                <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
+                <p>⛩ Spheres and cylinders can achieve smaller SA for same volume.</p>`;
+      }
+      else if (shape === "rectPrism") {
+        const a = Math.cbrt(volume);
+        const sa = 6 * a * a;
+        html = `<h3>Shape: Rectangular Prism</h3>
+                <div class="data-line">Optimal Dimensions: L=W=H=${a.toFixed(2)} cm</div>
+                <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
+                <p>📐 Best efficiency when all sides equal — i.e. a cube.</p>`;
+      }
+      else if (shape === "triangularPrism") {
+        const side = Math.cbrt(volume);
+        const sa = 5 * side * side;
+        html = `<h3>Shape: Triangular Prism</h3>
+                <div class="data-line">Side ≈ <span class="highlight">${side.toFixed(2)} cm</span></div>
+                <div class="data-line">Minimum Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>
+                <p>🔺 Sphere or cylinder would be more optimal for same volume.</p>`;
+      }
+      else if (shape === "torus") {
+        const r = Math.cbrt(volume / (2 * Math.PI * Math.PI));
+        const R = 2 * r;
+        const sa = 4 * Math.PI * Math.PI * R * r;
+        html = `<h3>Shape: Torus</h3>
+                <div class="data-line">Minor Radius (r) = <span class="highlight">${r.toFixed(2)} cm</span></div>
+                <div class="data-line">Major Radius (R) = <span class="highlight">${R.toFixed(2)} cm</span></div>
+                <div class="data-line">Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
+                <p>🌀 Tori look cool, but spheres win the efficiency battle!</p>`;
+      }
+
+      output.innerHTML = html;
+    }
   </script>
-
-  <!-- Replace YOUR_API_KEY with your actual Google Maps API key -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZXTwjD6KgRTDOu924Z_mmw43v3ANAUR0&callback=initMap" async defer></script>
 </body>
 </html>
