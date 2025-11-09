@@ -1,209 +1,547 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Engineering Mathematics Poster</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Maxima & Minima — Real-life Optimizer</title>
   <style>
-    /* ===== General Reset ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: "Poppins", sans-serif;
+    :root{
+      --sidebar-top: #0f1720;
+      --sidebar-bottom: #09101a;
+      --accent: #1976d2;
+      --accent-2: #00c6ff;
+      --card-bg: rgba(255,255,255,0.04);
+      --muted: #bfc8d6;
+      --glass: rgba(255,255,255,0.03);
     }
-
-    body {
-      display: flex;
-      height: 100vh;
-      background: #0f1115;
-      color: #f0f0f0;
-    }
-
-    /* ===== Sidebar ===== */
+    *{box-sizing:border-box}
+    body{ margin:0; font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color:#e8eef8; background:linear-gradient(180deg,#0a0d10,#071018); min-height:100vh; display:flex; }
+    /* Sidebar */
     .sidebar {
-      width: 220px;
-      background: linear-gradient(180deg, #1c1f26, #111318);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 40px;
-      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      width: 240px;
+      background: linear-gradient(180deg,var(--sidebar-top),var(--sidebar-bottom));
+      padding:28px 18px;
+      border-right:1px solid rgba(255,255,255,0.03);
+      display:flex; flex-direction:column; gap:20px;
     }
-
-    .sidebar h2 {
-      font-size: 1.4rem;
-      color: #fff;
-      margin-bottom: 40px;
-      letter-spacing: 1px;
+    .brand {
+      font-weight:700; letter-spacing:0.6px; font-size:18px; color:#fff; text-align:center;
+      padding:8px 10px; border-radius:10px; background: linear-gradient(90deg,var(--accent),var(--accent-2));
+      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
     }
-
-    .nav-btn {
-      width: 80%;
-      padding: 12px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.08);
-      color: #f0f0f0;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: 0.3s;
+    .nav {
+      display:flex; flex-direction:column; gap:8px; margin-top:6px;
     }
-
-    .nav-btn:hover, .nav-btn.active {
-      background: linear-gradient(90deg, #0077ff, #00c6ff);
-      color: #fff;
+    .nav button {
+      background:transparent; color:var(--muted); border:none; text-align:left; padding:12px 12px; border-radius:10px; cursor:pointer;
+      transition: all 160ms ease; font-weight:600;
     }
+    .nav button:hover { transform: translateY(-3px); color:#fff; background: rgba(255,255,255,0.02); }
+    .nav button.active { background: linear-gradient(90deg, rgba(25,118,210,0.14), rgba(0,198,255,0.06)); color:#fff; box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
 
-    /* ===== Main Content ===== */
+    .hint { font-size:12px; color:var(--muted); margin-top:6px; text-align:center; padding:6px 8px; background:transparent; border-radius:8px; }
+    /* Main area */
     .main {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 40px;
-      background: linear-gradient(135deg, #101216 0%, #151820 100%);
-      overflow: hidden;
+      flex:1; padding:28px; overflow:auto; display:flex; justify-content:center; align-items:flex-start;
     }
-
+    .container {
+      width:100%; max-width:1050px;
+      display:grid; grid-template-columns: 1fr; gap:18px;
+    }
     .card {
-      width: 80%;
-      max-width: 800px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-      display: none;
-      transition: opacity 0.4s ease;
+      background: var(--card-bg); border-radius:14px; padding:18px; box-shadow: 0 8px 30px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.02);
+      transition: transform 200ms ease;
     }
-
-    .card.active {
-      display: block;
-      opacity: 1;
+    .card h2 { color: #dff1ff; margin:0 0 8px 0; font-size:18px; }
+    .card p { color: var(--muted); margin:0 0 10px 0; font-size:13px; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-top:10px; }
+    label { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
+    input[type="number"], input[type="text"], select {
+      background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); color:#e9f5ff; padding:10px 12px; border-radius:8px;
+      min-width:160px; outline:none;
     }
-
-    .card h1 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      color: #ffffff;
+    input[type="number"]::placeholder, input[type="text"]::placeholder { color:#9fb0c9; }
+    button.btn {
+      background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; border:none; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:700;
     }
+    button.ghost { background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); padding:9px 12px; border-radius:8px; cursor:pointer; }
+    .result { margin-top:12px; background:var(--glass); padding:12px; border-radius:10px; font-size:14px; color:#eaf6ff; border:1px solid rgba(255,255,255,0.02); }
+    .muted { color:var(--muted); font-size:13px; }
+    .highlight { color:#bfeaff; font-weight:700; }
+    footer { text-align:center; color:var(--muted); margin-top:12px; font-size:13px; }
 
-    .card p {
-      line-height: 1.6;
-      color: #cfcfcf;
-    }
-
-    /* ===== Shortest Path Demo ===== */
-    .map-demo {
-      text-align: center;
-    }
-
-    canvas {
-      background: #222;
-      border-radius: 10px;
-      margin-top: 20px;
+    /* Responsive */
+    @media (max-width:900px){
+      .sidebar { display:none; }
+      body { padding:14px; }
+      .main { padding:0; }
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>Poster Tabs</h2>
-    <button class="nav-btn active" onclick="showCard('home')">Home</button>
-    <button class="nav-btn" onclick="showCard('maps')">Maps</button>
-  </div>
+  <aside class="sidebar" aria-label="Navigation">
+    <div class="brand">MinMax — Project</div>
+    <nav class="nav" role="navigation" aria-label="Main tabs">
+      <button id="tab-shapes" class="active" data-target="shapes">🔷 Shapes (Surface area)</button>
+      <button id="tab-crops" data-target="crops">🌾 Agriculture (Yield & Fertilizer)</button>
+      <button id="tab-econ" data-target="economics">💹 Economics (Profit max)</button>
+      <button id="tab-maps" data-target="maps">🗺 Maps (Real route)</button>
+    </nav>
+    <div class="hint">Click a tab to switch calculators</div>
+    <div style="flex:1"></div>
+    <div style="font-size:12px; color:var(--muted); text-align:center;">2025 © Krima Engineering Mathematics Project</div>
+  </aside>
 
-  <div class="main">
-    <div id="home" class="card active">
-      <h1>Welcome to Engineering Mathematics</h1>
-      <p>
-        This poster explores applications of mathematical modeling in engineering. 
-        It demonstrates the importance of optimization, shortest path algorithms, 
-        and applied graph theory in solving real-world problems.
-      </p>
-      <p>
-        Explore the <b>Maps</b> tab to see a simple visual example of the 
-        shortest distance between two points — a concept that connects directly 
-        to optimization and graph theory.
-      </p>
-    </div>
+  <main class="main">
+    <div class="container">
 
-    <div id="maps" class="card">
-      <h1>Shortest Path Visualization</h1>
-      <div class="map-demo">
-        <p>
-          Below is a basic demo showing a few nodes (A–E) connected by edges. 
-          The highlighted line represents the shortest path between two points.
-        </p>
-        <canvas id="mapCanvas" width="500" height="350"></canvas>
-      </div>
+      <!-- SHAPES -->
+      <section id="shapes" class="card" role="region" aria-labelledby="tab-shapes">
+        <h2>🔷 Shape Surface Area — minimize material</h2>
+        <p class="muted">Enter volume (cm³) and choose a shape. The calculator gives optimal dimensions (approx) and surface area.</p>
+        <div class="row">
+          <div>
+            <label for="shapeSelect">Shape</label>
+            <select id="shapeSelect">
+              <option value="">-- select --</option>
+              <option value="cube">Cube</option>
+              <option value="cuboid">Cuboid (optimal = cube)</option>
+              <option value="cylinder">Cylinder</option>
+              <option value="sphere">Sphere</option>
+              <option value="cone">Cone</option>
+              <option value="hemisphere">Hemisphere</option>
+              <option value="squarePyramid">Square Pyramid</option>
+              <option value="triangularPrism">Triangular Prism</option>
+              <option value="torus">Torus (approx)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="volumeInput">Volume (cm³)</label>
+            <input id="volumeInput" type="number" placeholder="e.g. 1000" min="0" />
+          </div>
+
+          <div style="align-self:flex-end;">
+            <button id="shapesCalc" class="btn">Calculate</button>
+            <button id="shapesReset" class="ghost">Reset</button>
+          </div>
+        </div>
+
+        <div id="shapesResult" class="result" aria-live="polite" style="display:none"></div>
+      </section>
+
+      <!-- CROPS -->
+      <section id="crops" class="card" role="region" aria-labelledby="tab-crops" style="display:none">
+        <h2>🌾 Agriculture — minimize fertilizer cost</h2>
+        <p class="muted">Simple model: base yield per hectare + yield increase per kg fertilizer. Compute fertilizer needed to reach a target total yield.</p>
+        <div class="row">
+          <div>
+            <label for="areaInput">Area (ha)</label>
+            <input id="areaInput" type="number" step="0.01" placeholder="e.g. 2.0" min="0" />
+          </div>
+          <div>
+            <label for="baseYield">Base yield (kg/ha)</label>
+            <input id="baseYield" type="number" placeholder="e.g. 3000" min="0" />
+          </div>
+          <div>
+            <label for="incPerKg">Yield increase per kg fertilizer (kg/kg)</label>
+            <input id="incPerKg" type="number" step="0.01" placeholder="e.g. 0.5" min="0" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:8px">
+          <div>
+            <label for="costPerKg">Cost per kg fertilizer (₹)</label>
+            <input id="costPerKg" type="number" placeholder="e.g. 20" min="0" />
+          </div>
+          <div>
+            <label for="targetYield">Target total yield (kg)</label>
+            <input id="targetYield" type="number" placeholder="e.g. 8000" min="0" />
+          </div>
+          <div style="align-self:flex-end">
+            <button id="cropsCalc" class="btn">Calculate</button>
+            <button id="cropsReset" class="ghost">Reset</button>
+          </div>
+        </div>
+
+        <div id="cropsResult" class="result" aria-live="polite" style="display:none"></div>
+      </section>
+
+      <!-- ECONOMICS -->
+      <section id="economics" class="card" role="region" aria-labelledby="tab-econ" style="display:none">
+        <h2>💹 Economics — maximize profit (simple demand)</h2>
+        <p class="muted">Demand: P = a − bQ. Cost: C = cQ + F. Profit max occurs at Q* = (a − c) / (2b) (if positive).</p>
+        <div class="row">
+          <div>
+            <label for="aInput">Demand intercept a (price at Q=0)</label>
+            <input id="aInput" type="number" placeholder="e.g. 200" min="0" />
+          </div>
+          <div>
+            <label for="bInput">Demand slope b (price drop per unit)</label>
+            <input id="bInput" type="number" step="0.01" placeholder="e.g. 0.5" min="0.0001" />
+          </div>
+          <div>
+            <label for="cInput">Variable cost per unit c</label>
+            <input id="cInput" type="number" placeholder="e.g. 20" min="0" />
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:8px">
+          <div>
+            <label for="fInput">Fixed cost F (₹)</label>
+            <input id="fInput" type="number" placeholder="e.g. 1000" min="0" />
+          </div>
+          <div style="align-self:flex-end">
+            <button id="econCalc" class="btn">Calculate</button>
+            <button id="econReset" class="ghost">Reset</button>
+          </div>
+        </div>
+
+        <div id="econResult" class="result" aria-live="polite" style="display:none"></div>
+      </section>
+
+      <!-- MAPS -->
+      <section id="maps" class="card" role="region" aria-labelledby="tab-maps" style="display:none">
+        <h2>🗺 Maps — choose start & end (Google Maps)</h2>
+        <p class="muted">Click on the map to set <strong>Start</strong> then <strong>End</strong>. Or enter addresses. Press <em>Get Route</em> to compute a real route with distance and duration.</p>
+
+        <div class="row">
+          <div>
+            <label for="startAddr">Start address (optional)</label>
+            <input id="startAddr" type="text" placeholder="Click map or type an address" />
+          </div>
+          <div>
+            <label for="endAddr">End address (optional)</label>
+            <input id="endAddr" type="text" placeholder="Click map or type an address" />
+          </div>
+          <div style="align-self:flex-end">
+            <button id="getRoute" class="btn">Get Route</button>
+            <button id="clearRoute" class="ghost">Clear</button>
+          </div>
+        </div>
+
+        <div id="map" style="margin-top:12px; width:100%; height:420px; border-radius:10px; overflow:hidden;"></div>
+
+        <div id="mapsResult" class="result" aria-live="polite" style="display:none; margin-top:12px;"></div>
+
+        <p class="muted" style="margin-top:8px">Note: Replace the API key inside the script tag at the bottom. Directions use drive mode by default.</p>
+      </section>
+
     </div>
-  </div>
+  </main>
 
   <script>
-    // ===== Tab Switching =====
-    function showCard(id) {
-      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      event.target.classList.add('active');
-    }
+    /* ------------------------------
+       Tab switching (robust, no globals)
+       ------------------------------ */
+    (function(){
+      const tabs = [
+        {btnId:'tab-shapes', panelId:'shapes'},
+        {btnId:'tab-crops',  panelId:'crops'},
+        {btnId:'tab-econ',   panelId:'economics'},
+        {btnId:'tab-maps',   panelId:'maps'}
+      ];
+      tabs.forEach(t=>{
+        const btn = document.getElementById(t.btnId);
+        btn.addEventListener('click', (ev)=>{
+          // remove active
+          tabs.forEach(x=>{
+            document.getElementById(x.btnId).classList.remove('active');
+            document.getElementById(x.panelId).style.display = 'none';
+          });
+          // set active
+          btn.classList.add('active');
+          document.getElementById(t.panelId).style.display = 'block';
+          // small scroll to top of container to show results
+          window.scrollTo({top:0, behavior:'smooth'});
+        });
+      });
+    })();
 
-    // ===== Simple Canvas Shortest Path Demo =====
-    const canvas = document.getElementById('mapCanvas');
-    const ctx = canvas.getContext('2d');
-
-    const points = {
-      A: { x: 80, y: 80 },
-      B: { x: 220, y: 60 },
-      C: { x: 360, y: 140 },
-      D: { x: 180, y: 220 },
-      E: { x: 340, y: 260 },
-    };
-
-    const edges = [
-      ['A', 'B'],
-      ['A', 'D'],
-      ['B', 'C'],
-      ['B', 'D'],
-      ['C', 'E'],
-      ['D', 'E'],
-    ];
-
-    function drawGraph() {
-      // draw edges
-      ctx.strokeStyle = "#666";
-      ctx.lineWidth = 2;
-      edges.forEach(([p1, p2]) => {
-        ctx.beginPath();
-        ctx.moveTo(points[p1].x, points[p1].y);
-        ctx.lineTo(points[p2].x, points[p2].y);
-        ctx.stroke();
+    /* ------------------------------
+       SHAPES: calculations (clean)
+       ------------------------------ */
+    (function(){
+      const el = {
+        shape: document.getElementById('shapeSelect'),
+        vol: document.getElementById('volumeInput'),
+        btn: document.getElementById('shapesCalc'),
+        reset: document.getElementById('shapesReset'),
+        out: document.getElementById('shapesResult')
+      };
+      el.btn.addEventListener('click', ()=>{
+        el.out.style.display='none'; el.out.innerHTML='';
+        const shape = el.shape.value;
+        const volume = parseFloat(el.vol.value);
+        if(!shape || !volume || volume <= 0){ el.out.style.display='block'; el.out.innerHTML = '<div style="color:#ffb3b3">⚠ Please select shape and enter valid positive volume.</div>'; return; }
+        const pi = Math.PI;
+        let html = '';
+        if(shape==='cube' || shape==='cuboid'){
+          const a = Math.cbrt(volume);
+          const sa = 6*a*a;
+          html = `<h3>Shape: ${shape==='cube'?'Cube':'Cuboid (optimal = cube)'}</h3>
+                  <div class="muted">Side ≈ <span class="highlight">${a.toFixed(2)} cm</span></div>
+                  <div class="muted">Minimum Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
+        } else if(shape==='cylinder'){
+          const r = Math.cbrt(volume / (2*pi));
+          const h = 2*r;
+          const sa = 2*pi*r*(r+h);
+          html = `<h3>Cylinder (optimal approx)</h3>
+                  <div class="muted">Radius ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>
+                  <div class="muted">Height ≈ <span class="highlight">${h.toFixed(2)} cm</span></div>
+                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
+        } else if(shape==='sphere'){
+          const r = Math.cbrt((3*volume)/(4*pi));
+          const sa = 4*pi*r*r;
+          html = `<h3>Sphere</h3>
+                  <div class="muted">Radius ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>
+                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
+        } else if(shape==='cone'){
+          const r = Math.cbrt((3*volume)/(Math.PI*Math.sqrt(4)));
+          const h = Math.sqrt(3)*r;
+          const l = Math.sqrt(r*r + h*h);
+          const sa = Math.PI*r*(r + l);
+          html = `<h3>Cone (approx)</h3>
+                  <div class="muted">Radius ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>
+                  <div class="muted">Height ≈ <span class="highlight">${h.toFixed(2)} cm</span></div>
+                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
+        } else if(shape==='hemisphere'){
+          const r = Math.cbrt((3*volume)/(2*pi));
+          const sa = 3*pi*r*r;
+          html = `<h3>Hemisphere</h3>
+                  <div class="muted">Radius ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>
+                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
+        } else if(shape==='squarePyramid'){
+          const a = Math.cbrt(volume);
+          const h = a;
+          const sa = a*a + 2*a*Math.sqrt((a/2)*(a/2) + h*h);
+          html = `<h3>Square Pyramid (approx)</h3>
+                  <div class="muted">Base side ≈ <span class="highlight">${a.toFixed(2)} cm</span></div>
+                  <div class="muted">Height ≈ <span class="highlight">${h.toFixed(2)} cm</span></div>
+                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
+        } else if(shape==='triangularPrism'){
+          const side = Math.cbrt(volume);
+          const sa = 5*side*side;
+          html = `<h3>Triangular Prism (rough)</h3>
+                  <div class="muted">Characteristic side ≈ <span class="highlight">${side.toFixed(2)} cm</span></div>
+                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
+        } else if(shape==='torus'){
+          const r = Math.cbrt(volume / (2*Math.PI*Math.PI));
+          const R = 2*r;
+          const sa = 4*Math.PI*Math.PI*R*r;
+          html = `<h3>Torus (approx)</h3>
+                  <div class="muted">Minor radius r ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>
+                  <div class="muted">Major radius R ≈ <span class="highlight">${R.toFixed(2)} cm</span></div>
+                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
+        }
+        el.out.style.display='block';
+        el.out.innerHTML = html + '<div class="muted" style="margin-top:8px">Tip: Spheres tend to minimize surface area for a given volume.</div>';
       });
 
-      // highlight shortest path (A → D → E)
-      ctx.strokeStyle = "#00c6ff";
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(points.A.x, points.A.y);
-      ctx.lineTo(points.D.x, points.D.y);
-      ctx.lineTo(points.E.x, points.E.y);
-      ctx.stroke();
+      el.reset.addEventListener('click', ()=>{
+        el.shape.value=''; el.vol.value=''; el.out.style.display='none'; el.out.innerHTML='';
+      });
+    })();
 
-      // draw nodes
-      for (const [label, { x, y }] of Object.entries(points)) {
-        ctx.fillStyle = "#fff";
-        ctx.beginPath();
-        ctx.arc(x, y, 8, 0, Math.PI * 2);
-        ctx.fill();
+    /* ------------------------------
+       CROPS
+       ------------------------------ */
+    (function(){
+      const el = {
+        area: document.getElementById('areaInput'),
+        base: document.getElementById('baseYield'),
+        inc: document.getElementById('incPerKg'),
+        cost: document.getElementById('costPerKg'),
+        target: document.getElementById('targetYield'),
+        btn: document.getElementById('cropsCalc'),
+        reset: document.getElementById('cropsReset'),
+        out: document.getElementById('cropsResult')
+      };
+      el.btn.addEventListener('click', ()=>{
+        el.out.style.display='none'; el.out.innerHTML='';
+        const area = parseFloat(el.area.value), base = parseFloat(el.base.value), inc = parseFloat(el.inc.value), cost = parseFloat(el.cost.value), target = parseFloat(el.target.value);
+        if(isNaN(area) || isNaN(base) || isNaN(inc) || isNaN(cost) || isNaN(target) || area<=0 || base<=0 || inc<=0 || cost<0 || target<=0){
+          el.out.style.display='block'; el.out.innerHTML = '<div style="color:#ffb3b3">⚠ Fill all fields with valid positive numbers (cost can be zero).</div>'; return;
+        }
+        const baseTotal = base * area;
+        if(baseTotal >= target){
+          el.out.style.display='block';
+          el.out.innerHTML = `<h3>Already meets target</h3>
+            <div class="muted">Base total yield: <span class="highlight">${baseTotal.toFixed(0)} kg</span></div>
+            <div class="muted" style="margin-top:6px">No extra fertilizer required.</div>`;
+          return;
+        }
+        const neededExtra = target - baseTotal;
+        const fertNeeded = neededExtra / inc;
+        const totalCost = fertNeeded * cost;
+        el.out.style.display='block';
+        el.out.innerHTML = `<h3>Fertilizer plan</h3>
+          <div class="muted">Base total yield: <span class="highlight">${baseTotal.toFixed(0)} kg</span></div>
+          <div class="muted">Extra yield needed: <span class="highlight">${neededExtra.toFixed(0)} kg</span></div>
+          <div class="muted">Fertilizer needed: <span class="highlight">${fertNeeded.toFixed(2)} kg</span></div>
+          <div class="muted">Estimated fertilizer cost: <span class="highlight">₹ ${totalCost.toFixed(2)}</span></div>
+          <div class="muted" style="margin-top:6px">Suggestion: improving base yield or area can be more cost-effective than heavy fertilizer use.</div>`;
+      });
 
-        ctx.fillStyle = "#ccc";
-        ctx.font = "14px Poppins";
-        ctx.fillText(label, x - 4, y - 15);
-      }
-    }
+      el.reset.addEventListener('click', ()=>{
+        [el.area, el.base, el.inc, el.cost, el.target].forEach(i=>i.value=''); el.out.style.display='none'; el.out.innerHTML='';
+      });
+    })();
 
-    drawGraph();
+    /* ------------------------------
+       ECONOMICS
+       ------------------------------ */
+    (function(){
+      const el = {
+        a: document.getElementById('aInput'),
+        b: document.getElementById('bInput'),
+        c: document.getElementById('cInput'),
+        f: document.getElementById('fInput'),
+        btn: document.getElementById('econCalc'),
+        reset: document.getElementById('econReset'),
+        out: document.getElementById('econResult')
+      };
+      el.btn.addEventListener('click', ()=>{
+        el.out.style.display='none'; el.out.innerHTML='';
+        const a = parseFloat(el.a.value), b = parseFloat(el.b.value), c = parseFloat(el.c.value), F = parseFloat(el.f.value) || 0;
+        if(isNaN(a) || isNaN(b) || isNaN(c) || a<=0 || b<=0){ el.out.style.display='block'; el.out.innerHTML = '<div style="color:#ffb3b3">⚠ Enter valid numbers: a>0, b>0, c numeric.</div>'; return; }
+        const qOpt = (a - c) / (2*b);
+        if(qOpt <= 0){ el.out.style.display='block'; el.out.innerHTML = <h3>No interior maximum</h3><div class="muted">With these parameters, optimal Q is ≤ 0. Check inputs.</div>; return; }
+        const price = a - b*qOpt;
+        const revenue = price * qOpt;
+        const cost = c * qOpt + F;
+        const profit = revenue - cost;
+        el.out.style.display='block';
+        el.out.innerHTML = `<h3>Optimal production</h3>
+          <div class="muted">Q* = <span class="highlight">${qOpt.toFixed(2)}</span> units</div>
+          <div class="muted">Price at Q*: <span class="highlight">₹ ${price.toFixed(2)}</span></div>
+          <div class="muted">Estimated profit: <span class="highlight">₹ ${profit.toFixed(2)}</span></div>
+          <div class="muted" style="margin-top:6px">This is a simple linear-demand model for demonstration.</div>`;
+      });
+      el.reset.addEventListener('click', ()=>{ [el.a,el.b,el.c,el.f].forEach(x=>x.value=''); el.out.style.display='none'; el.out.innerHTML=''; });
+    })();
+
+    /* ------------------------------
+       MAPS: Google Maps integration
+       - Click map to set Start, then End.
+       - Or type addresses and press Get Route.
+       - Uses DirectionsService and DirectionsRenderer.
+       ------------------------------ */
+    let map, directionsService, directionsRenderer, startMarker, endMarker;
+    (function(){
+      // basic DOM refs
+      const startInput = document.getElementById('startAddr');
+      const endInput   = document.getElementById('endAddr');
+      const getRouteBtn = document.getElementById('getRoute');
+      const clearBtn = document.getElementById('clearRoute');
+      const mapsResult = document.getElementById('mapsResult');
+
+      // Called by Google Maps script callback to initialize map
+      window.initMap = function() {
+        // default center
+        const center = { lat: 23.0225, lng: 72.5714 }; // Ahmedabad as neutral example
+        map = new google.maps.Map(document.getElementById('map'), { center, zoom: 11, mapTypeControl:false });
+
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer({ suppressMarkers: true, preserveViewport: true });
+        directionsRenderer.setMap(map);
+
+        // click handler: set start -> end
+        map.addListener('click', (ev) => {
+          const pos = { lat: ev.latLng.lat(), lng: ev.latLng.lng() };
+          if(!startMarker){
+            startMarker = new google.maps.Marker({ position: pos, map, label: 'A' });
+            startInput.value = ${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)};
+          } else if(!endMarker){
+            endMarker = new google.maps.Marker({ position: pos, map, label: 'B' });
+            endInput.value = ${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)};
+          } else {
+            // rotate: clear previous and set new start
+            startMarker.setMap(null); startMarker = endMarker;
+            startMarker.setLabel('A');
+            endMarker = new google.maps.Marker({ position: pos, map, label: 'B' });
+            startInput.value = ${startMarker.getPosition().lat().toFixed(6)}, ${startMarker.getPosition().lng().toFixed(6)};
+            endInput.value = ${endMarker.getPosition().lat().toFixed(6)}, ${endMarker.getPosition().lng().toFixed(6)};
+          }
+        });
+
+        // give marker drag ability (optional)
+        // initialize empty
+        mapsResult.style.display='none';
+      };
+
+      // run route
+      getRouteBtn.addEventListener('click', ()=>{
+        mapsResult.style.display='none'; mapsResult.innerHTML='';
+        const startVal = startInput.value.trim();
+        const endVal = endInput.value.trim();
+        if(!startVal || !endVal){ mapsResult.style.display='block'; mapsResult.innerHTML = '<div style="color:#ffb3b3">⚠ Provide both start and end (either click map or write addresses/coords).</div>'; return; }
+
+        // clear previous route
+        directionsRenderer.set('directions', null);
+
+        // if inputs look like coordinates "lat, lng", convert to LatLng, else use address string
+        const parseMaybeLatLng = (s)=>{
+          const parts = s.split(',').map(p=>p.trim());
+          if(parts.length===2 && !isNaN(Number(parts[0])) && !isNaN(Number(parts[1]))){
+            return { lat: Number(parts[0]), lng: Number(parts[1]) };
+          }
+          return s; // treat as address string
+        };
+
+        const origin = parseMaybeLatLng(startVal);
+        const destination = parseMaybeLatLng(endVal);
+
+        const request = {
+          origin,
+          destination,
+          travelMode: google.maps.TravelMode.DRIVING
+        };
+
+        directionsService.route(request, (result, status) => {
+          if(status === 'OK'){
+            directionsRenderer.setDirections(result);
+            // auto-place markers at endpoints (clean)
+            const routeLeg = result.routes[0].legs[0];
+            if(startMarker){ startMarker.setMap(null); startMarker=null; }
+            if(endMarker){ endMarker.setMap(null); endMarker=null; }
+            startMarker = new google.maps.Marker({ position: routeLeg.start_location, map, label: 'A' });
+            endMarker   = new google.maps.Marker({ position: routeLeg.end_location, map, label: 'B' });
+
+            // show distance & duration
+            const distanceText = routeLeg.distance ? routeLeg.distance.text : 'N/A';
+            const durationText = routeLeg.duration ? routeLeg.duration.text : 'N/A';
+            mapsResult.style.display='block';
+            mapsResult.innerHTML = `<h3>Route</h3>
+              <div class="muted">From: <span class="highlight">${routeLeg.start_address}</span></div>
+              <div class="muted">To: <span class="highlight">${routeLeg.end_address}</span></div>
+              <div class="muted">Distance: <span class="highlight">${distanceText}</span></div>
+              <div class="muted">Estimated time: <span class="highlight">${durationText}</span></div>`;
+          } else {
+            mapsResult.style.display='block';
+            mapsResult.innerHTML = <div style="color:#ffb3b3">⚠ Route failed: ${status}. Check addresses or your API key and billing on Google Cloud Console.</div>;
+          }
+        });
+      });
+
+      clearBtn.addEventListener('click', ()=>{
+        startInput.value=''; endInput.value=''; mapsResult.style.display='none'; mapsResult.innerHTML='';
+        if(startMarker){ startMarker.setMap(null); startMarker=null; }
+        if(endMarker){ endMarker.setMap(null); endMarker=null; }
+        if(directionsRenderer) directionsRenderer.set('directions', null);
+      });
+    })();
   </script>
+
+  <!-- ====== Google Maps JS (replace API KEY below) ======
+       IMPORTANT: Replace YOUR_GOOGLE_MAPS_API_KEY_HERE with your API key.
+       The API must have Maps JavaScript API and Directions API enabled.
+       Use "async defer" and callback "initMap" defined above.
+  ======================================================= -->
+  <script
+    async
+    defer
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY_HERE&libraries=places&callback=initMap"
+  ></script>
 </body>
 </html>
