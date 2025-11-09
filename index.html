@@ -1,443 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Maxima & Minima — Real-life Optimizer</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Engineering Mathematics Poster</title>
   <style>
-    :root{
-      --bg1:#eef6ff;
-      --bg2:#fff2f8;
-      --card:#ffffff;
-      --accent:#1976d2;
-      --accent-2:#ff6b6b;
-      --muted:#666;
-      --glass: rgba(255,255,255,0.75);
+    /* ===== General Reset ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0; font-family: Poppins, system-ui, sans-serif;
-      background: linear-gradient(135deg,var(--bg1),var(--bg2));
-      color:#222; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
-      padding:32px 16px; display:flex; justify-content:center;
+
+    body {
+      display: flex;
+      height: 100vh;
+      background: #0f1115;
+      color: #f0f0f0;
     }
-    .wrap{width:100%; max-width:1100px}
-    header{display:flex; align-items:center; gap:16px; margin-bottom:18px}
-    .brand{background:linear-gradient(90deg,var(--accent),#4db6ff); color:white; padding:10px 14px; border-radius:12px; font-weight:700}
-    h1{font-size:20px;margin:0}
-    p.lead{margin:0;color:var(--muted); font-size:13px}
 
-    .grid{display:grid; grid-template-columns: 320px 1fr; gap:20px}
+    /* ===== Sidebar ===== */
+    .sidebar {
+      width: 220px;
+      background: linear-gradient(180deg, #1c1f26, #111318);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 40px;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-    /* left nav / tabs */
-    .card{background:var(--card); border-radius:14px; padding:14px; box-shadow:0 6px 18px rgba(15,20,30,0.08)}
-    .tabs{display:flex; flex-direction:column; gap:8px}
-    .tab-btn{display:flex; gap:10px; align-items:center; padding:10px; border-radius:10px; cursor:pointer; border:1px solid rgba(0,0,0,0.04); background:transparent}
-    .tab-btn:hover{transform:translateY(-3px)}
-    .tab-btn.active{background:linear-gradient(90deg, rgba(25,118,210,0.12), rgba(77,182,255,0.08)); border-color: rgba(25,118,210,0.14)}
-    .tab-emoji{font-size:18px}
-    .tab-title{font-weight:600}
-    .tab-sub{font-size:12px; color:var(--muted)}
+    .sidebar h2 {
+      font-size: 1.4rem;
+      color: #fff;
+      margin-bottom: 40px;
+      letter-spacing: 1px;
+    }
 
-    /* main area */
-    .main{display:flex; flex-direction:column; gap:14px}
-    .panel{display:none}
-    .panel.active{display:block}
-    .panel-header{display:flex; justify-content:space-between; align-items:center}
-    .panel-header h2{margin:0; font-size:18px; color:var(--accent)}
-    .inputs{display:flex; flex-wrap:wrap; gap:10px; margin-top:12px}
-    label{display:block; font-size:13px; color:var(--muted)}
-    input[type=number], input[type=text], select{padding:10px; border-radius:8px; border:1px solid #ddd; width:200px}
-    .small{width:140px}
-    .controls{display:flex; gap:8px; margin-top:12px}
-    button.primary{background:var(--accent); color:white; border:none; padding:10px 14px; border-radius:10px; cursor:pointer}
-    button.ghost{background:transparent; border:1px solid #ddd; padding:10px 12px; border-radius:10px; cursor:pointer}
+    .nav-btn {
+      width: 80%;
+      padding: 12px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #f0f0f0;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
 
-    .result{margin-top:12px; background:var(--glass); padding:12px; border-radius:10px; border:1px solid rgba(0,0,0,0.03)}
-    .result h3{margin:0 0 8px 0; font-size:16px}
-    .line{font-size:14px; margin:6px 0}
-    .muted{color:var(--muted)}
-    .highlight{font-weight:700; color:var(--accent)}
+    .nav-btn:hover, .nav-btn.active {
+      background: linear-gradient(90deg, #0077ff, #00c6ff);
+      color: #fff;
+    }
 
-    footer{margin-top:18px; font-size:12px; color:var(--muted)}
+    /* ===== Main Content ===== */
+    .main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      background: linear-gradient(135deg, #101216 0%, #151820 100%);
+      overflow: hidden;
+    }
 
-    /* responsive */
-    @media (max-width:900px){ .grid{grid-template-columns: 1fr; } .card{padding:12px} input[type=number]{width:100%} .inputs{flex-direction:column} }
+    .card {
+      width: 80%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      display: none;
+      transition: opacity 0.4s ease;
+    }
+
+    .card.active {
+      display: block;
+      opacity: 1;
+    }
+
+    .card h1 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+
+    .card p {
+      line-height: 1.6;
+      color: #cfcfcf;
+    }
+
+    /* ===== Shortest Path Demo ===== */
+    .map-demo {
+      text-align: center;
+    }
+
+    canvas {
+      background: #222;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="brand">MinMax</div>
-      <div>
-        <h1>Maxima & Minima — Real‑life Optimizer</h1>
-        <p class="lead">Choose a use case on the left. Minimal animations — focused on clear calculations and friendly UI.</p>
+  <div class="sidebar">
+    <h2>Poster Tabs</h2>
+    <button class="nav-btn active" onclick="showCard('home')">Home</button>
+    <button class="nav-btn" onclick="showCard('maps')">Maps</button>
+  </div>
+
+  <div class="main">
+    <div id="home" class="card active">
+      <h1>Welcome to Engineering Mathematics</h1>
+      <p>
+        This poster explores applications of mathematical modeling in engineering. 
+        It demonstrates the importance of optimization, shortest path algorithms, 
+        and applied graph theory in solving real-world problems.
+      </p>
+      <p>
+        Explore the <b>Maps</b> tab to see a simple visual example of the 
+        shortest distance between two points — a concept that connects directly 
+        to optimization and graph theory.
+      </p>
+    </div>
+
+    <div id="maps" class="card">
+      <h1>Shortest Path Visualization</h1>
+      <div class="map-demo">
+        <p>
+          Below is a basic demo showing a few nodes (A–E) connected by edges. 
+          The highlighted line represents the shortest path between two points.
+        </p>
+        <canvas id="mapCanvas" width="500" height="350"></canvas>
       </div>
-    </header>
-
-    <div class="grid">
-      <aside class="card">
-        <div style="font-weight:700; margin-bottom:8px">Select an application</div>
-        <div class="tabs" id="tabs">
-          <div class="tab-btn active" data-target="shapes"><div class="tab-emoji">🔷</div><div>
-            <div class="tab-title">Shapes (Surface area)</div>
-            <div class="tab-sub">Minimize material for a given volume</div></div></div>
-
-          <div class="tab-btn" data-target="crops"><div class="tab-emoji">🌾</div><div>
-            <div class="tab-title">Agriculture</div>
-            <div class="tab-sub">Minimize cost to reach target yield</div></div></div>
-
-          <div class="tab-btn" data-target="economics"><div class="tab-emoji">💹</div><div>
-            <div class="tab-title">Economics</div>
-            <div class="tab-sub">Find production that maximizes profit</div></div></div>
-
-          <div class="tab-btn" data-target="maps"><div class="tab-emoji">🗺</div><div>
-            <div class="tab-title">Shortest Path (maps)</div>
-            <div class="tab-sub">Find shortest visiting order (small sets)</div></div></div>
-        </div>
-
-        <div style="margin-top:12px; font-size:13px; color:var(--muted)">Hint: Tabs switch between calculators. Keep inputs realistic (small number of map points).</div>
-      </aside>
-
-      <main class="main">
-        <!-- Shapes panel -->
-        <section id="shapes" class="panel active card">
-          <div class="panel-header"><h2>🔷 Shape Surface Area (minimize material)</h2>
-            <div class="muted">Enter volume; choose shape.</div></div>
-          <div class="inputs">
-            <div>
-              <label for="shape-select">Shape</label>
-              <select id="shape-select">
-                <option value="">-- select --</option>
-                <option value="cube">Cube</option>
-                <option value="cuboid">Cuboid (optimal = cube)</option>
-                <option value="cylinder">Cylinder (optimal H=2R)</option>
-                <option value="sphere">Sphere</option>
-                <option value="cone">Right circular cone</option>
-                <option value="hemisphere">Hemisphere</option>
-                <option value="squarePyramid">Square pyramid</option>
-                <option value="triangularPrism">Triangular prism</option>
-                <option value="torus">Torus (approx.)</option>
-              </select>
-            </div>
-
-            <div>
-              <label for="vol">Volume (cm³)</label>
-              <input id="vol" type="number" placeholder="e.g. 1000" />
-            </div>
-
-            <div style="align-self:end">
-              <div style="display:flex; gap:8px">
-                <button class="primary" id="shapes-calc">Calculate</button>
-                <button class="ghost" id="shapes-reset">Reset</button>
-              </div>
-            </div>
-          </div>
-
-          <div id="shapes-result" class="result" aria-live="polite"></div>
-        </section>
-
-        <!-- Crops panel -->
-        <section id="crops" class="panel card">
-          <div class="panel-header"><h2>🌾 Agriculture — minimize fertilizer cost</h2>
-            <div class="muted">Simple linear model: base yield + fertilizer boost</div></div>
-
-          <div class="inputs">
-            <div>
-              <label for="area">Area (hectares)</label>
-              <input id="area" type="number" placeholder="e.g. 2" step="0.01" />
-            </div>
-            <div>
-              <label for="baseYield">Base yield (kg/ha)</label>
-              <input id="baseYield" type="number" placeholder="e.g. 3000" />
-            </div>
-            <div>
-              <label for="incPerKg">Yield increase per kg fertilizer (kg/kg)</label>
-              <input id="incPerKg" type="number" placeholder="e.g. 0.5" step="0.01" />
-            </div>
-            <div>
-              <label for="costPerKg">Cost per kg fertilizer (₹)</label>
-              <input id="costPerKg" type="number" placeholder="e.g. 20" />
-            </div>
-            <div>
-              <label for="targetYield">Target total yield (kg)</label>
-              <input id="targetYield" type="number" placeholder="e.g. 8000" />
-            </div>
-
-            <div style="align-self:end">
-              <div style="display:flex; gap:8px">
-                <button class="primary" id="crops-calc">Calculate</button>
-                <button class="ghost" id="crops-reset">Reset</button>
-              </div>
-            </div>
-          </div>
-
-          <div id="crops-result" class="result" aria-live="polite"></div>
-        </section>
-
-        <!-- Economics panel -->
-        <section id="economics" class="panel card">
-          <div class="panel-header"><h2>💹 Economics — maximize profit (simple demand model)</h2>
-            <div class="muted">Demand: P = a − bQ. Costs: C = cQ + F. Profit max at Q = (a−c)/(2b)</div></div>
-
-          <div class="inputs">
-            <div>
-              <label for="a">Demand intercept a (price when Q=0)</label>
-              <input id="a" type="number" placeholder="e.g. 200" />
-            </div>
-            <div>
-              <label for="b">Demand slope b (price drop per unit)</label>
-              <input id="b" type="number" placeholder="e.g. 0.5" step="0.01" />
-            </div>
-            <div>
-              <label for="c">Variable cost per unit c</label>
-              <input id="c" type="number" placeholder="e.g. 20" />
-            </div>
-            <div>
-              <label for="f">Fixed cost F (₹)</label>
-              <input id="f" type="number" placeholder="e.g. 1000" />
-            </div>
-
-            <div style="align-self:end">
-              <div style="display:flex; gap:8px">
-                <button class="primary" id="econ-calc">Calculate</button>
-                <button class="ghost" id="econ-reset">Reset</button>
-              </div>
-            </div>
-          </div>
-
-          <div id="econ-result" class="result" aria-live="polite"></div>
-        </section>
-
-        <!-- Maps panel -->
-        <section id="maps" class="panel card">
-          <div class="panel-header"><h2>🗺 Shortest visiting order (Euclidean)</h2>
-            <div class="muted">Enter up to 7 points (x,y). We'll brute-force best order (for demo).</div></div>
-
-          <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap">
-            <input id="map-x" type="number" placeholder="x (km)" class="small" />
-            <input id="map-y" type="number" placeholder="y (km)" class="small" />
-            <button class="primary" id="add-point">Add point</button>
-            <button class="ghost" id="clear-points">Clear</button>
-          </div>
-
-          <div id="points-list" style="margin-top:10px; font-size:14px" class="muted">No points added</div>
-          <div style="display:flex; gap:8px; margin-top:10px">
-            <button class="primary" id="maps-calc">Find shortest order</button>
-          </div>
-
-          <div id="maps-result" class="result" style="margin-top:12px" aria-live="polite"></div>
-        </section>
-
-        <footer>2025 © Krima — Engineering Mathematics project. QR to this GitHub repo can be added outside.</footer>
-      </main>
     </div>
   </div>
 
   <script>
-    // Tab switching
-    document.querySelectorAll('.tab-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        const t = btn.getAttribute('data-target');
-        document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-        document.getElementById(t).classList.add('active');
-        window.scrollTo({top:0,behavior:'smooth'});
-      })
-    })
-
-    // --------- Shapes logic (based on your code, cleaned) ---------
-    function shapesCalculate(){
-      const shape = document.getElementById('shape-select').value;
-      const volume = parseFloat(document.getElementById('vol').value);
-      const out = document.getElementById('shapes-result');
-      out.innerHTML='';
-      if(!shape || !volume || volume<=0){ out.innerHTML = '<div style="color:#b00020">⚠ Please select shape and enter valid volume.</div>'; return }
-
-      let html='';
-      const pi=Math.PI;
-      if(shape==='cube' || shape==='cuboid' || shape==='rectPrism'){
-        const a = Math.cbrt(volume);
-        const sa = 6*a*a;
-        html += <h3>Shape: ${shape==='cube'? 'Cube' : shape==='cuboid' ? 'Cuboid (optimal = cube)' : 'Rectangular Prism (optimal = cube)'}</h3>;
-        html += <div class="line">Side ≈ <span class="highlight">${a.toFixed(2)} cm</span></div>;
-        html += <div class="line">Minimum Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>;
-      }
-      else if(shape==='cylinder'){
-        const r = Math.cbrt(volume/(2*pi));
-        const h = 2*r;
-        const sa = 2*pi*r*(r+h);
-        html += <h3>Cylinder (optimal ratio H=2R)</h3>;
-        html += <div class="line">Radius ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>;
-        html += <div class="line">Height ≈ <span class="highlight">${h.toFixed(2)} cm</span></div>;
-        html += <div class="line">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>;
-      }
-      else if(shape==='sphere'){
-        const r = Math.cbrt((3*volume)/(4*pi));
-        const sa = 4*pi*r*r;
-        html += <h3>Sphere</h3>;
-        html += <div class="line">Radius ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>;
-        html += <div class="line">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>;
-      }
-      else if(shape==='cone'){
-        // optimal cone proportions (for minimum surface for fixed volume) ~ h = sqrt(3) r (approx used earlier)
-        const r = Math.cbrt((3*volume)/(Math.PI*Math.sqrt(4)));
-        const h = Math.sqrt(3)*r;
-        const l = Math.sqrt(r*r + h*h);
-        const sa = Math.PI*r*(r + l);
-        html += <h3>Right Circular Cone (approx)</h3>;
-        html += <div class="line">Radius ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>;
-        html += <div class="line">Height ≈ <span class="highlight">${h.toFixed(2)} cm</span></div>;
-        html += <div class="line">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>;
-      }
-      else if(shape==='hemisphere'){
-        const r = Math.cbrt((3*volume)/(2*pi));
-        const sa = 3*pi*r*r; // curved + base
-        html += <h3>Hemisphere</h3>;
-        html += <div class="line">Radius ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>;
-        html += <div class="line">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>;
-      }
-      else if(shape==='squarePyramid'){
-        const a = Math.cbrt(volume);
-        const h = a;
-        const sa = a*a + 2*a*Math.sqrt((a/2)*(a/2) + h*h);
-        html += <h3>Square Pyramid (approx)</h3>;
-        html += <div class="line">Base side ≈ <span class="highlight">${a.toFixed(2)} cm</span></div>;
-        html += <div class="line">Height ≈ <span class="highlight">${h.toFixed(2)} cm</span></div>;
-        html += <div class="line">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>;
-      }
-      else if(shape==='triangularPrism'){
-        const side = Math.cbrt(volume);
-        const sa = 5*side*side; // rough
-        html += <h3>Triangular Prism (rough)</h3>;
-        html += <div class="line">Characteristic side ≈ <span class="highlight">${side.toFixed(2)} cm</span></div>;
-        html += <div class="line">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>;
-      }
-      else if(shape==='torus'){
-        const r = Math.cbrt(volume/(2*pi*pi));
-        const R = 2*r;
-        const sa = 4*pi*pi*R*r;
-        html += <h3>Torus (approx)</h3>;
-        html += <div class="line">Minor radius r ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>;
-        html += <div class="line">Major radius R ≈ <span class="highlight">${R.toFixed(2)} cm</span></div>;
-        html += <div class="line">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>;
-      }
-
-      out.innerHTML = html + '<div class="muted" style="margin-top:8px">Tip: For same volume, a sphere typically gives the least surface area.</div>';
+    // ===== Tab Switching =====
+    function showCard(id) {
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      event.target.classList.add('active');
     }
 
-    document.getElementById('shapes-calc').addEventListener('click', shapesCalculate);
-    document.getElementById('shapes-reset').addEventListener('click', ()=>{ document.getElementById('shape-select').value=''; document.getElementById('vol').value=''; document.getElementById('shapes-result').innerHTML=''; })
+    // ===== Simple Canvas Shortest Path Demo =====
+    const canvas = document.getElementById('mapCanvas');
+    const ctx = canvas.getContext('2d');
 
-    // --------- Crops logic (simple linear model) ---------
-    function cropsCalculate(){
-      const area = parseFloat(document.getElementById('area').value);
-      const baseYield = parseFloat(document.getElementById('baseYield').value);
-      const incPerKg = parseFloat(document.getElementById('incPerKg').value);
-      const costPerKg = parseFloat(document.getElementById('costPerKg').value);
-      const target = parseFloat(document.getElementById('targetYield').value);
-      const out = document.getElementById('crops-result'); out.innerHTML='';
-      if(!area || !baseYield || !incPerKg || !costPerKg || !target){ out.innerHTML='<div style="color:#b00020">⚠ Fill all inputs with positive numbers.</div>'; return }
+    const points = {
+      A: { x: 80, y: 80 },
+      B: { x: 220, y: 60 },
+      C: { x: 360, y: 140 },
+      D: { x: 180, y: 220 },
+      E: { x: 340, y: 260 },
+    };
 
-      const baseTotal = baseYield * area;
-      if(baseTotal >= target){
-        out.innerHTML = <h3>Already meets target</h3><div class="line">Base total yield: <span class="highlight">${baseTotal.toFixed(0)} kg</span></div><div class="muted">No extra fertilizer required.</div>;
-        return;
+    const edges = [
+      ['A', 'B'],
+      ['A', 'D'],
+      ['B', 'C'],
+      ['B', 'D'],
+      ['C', 'E'],
+      ['D', 'E'],
+    ];
+
+    function drawGraph() {
+      // draw edges
+      ctx.strokeStyle = "#666";
+      ctx.lineWidth = 2;
+      edges.forEach(([p1, p2]) => {
+        ctx.beginPath();
+        ctx.moveTo(points[p1].x, points[p1].y);
+        ctx.lineTo(points[p2].x, points[p2].y);
+        ctx.stroke();
+      });
+
+      // highlight shortest path (A → D → E)
+      ctx.strokeStyle = "#00c6ff";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(points.A.x, points.A.y);
+      ctx.lineTo(points.D.x, points.D.y);
+      ctx.lineTo(points.E.x, points.E.y);
+      ctx.stroke();
+
+      // draw nodes
+      for (const [label, { x, y }] of Object.entries(points)) {
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.arc(x, y, 8, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#ccc";
+        ctx.font = "14px Poppins";
+        ctx.fillText(label, x - 4, y - 15);
       }
-      // fertilizer needed (kg)
-      const neededExtra = target - baseTotal;
-      const fertNeeded = neededExtra / incPerKg;
-      const totalCost = fertNeeded * costPerKg;
-      out.innerHTML = `<h3>Fertilizer plan</h3>
-        <div class="line">Base total yield: <span class="highlight">${baseTotal.toFixed(0)} kg</span></div>
-        <div class="line">Extra yield needed: <span class="highlight">${neededExtra.toFixed(0)} kg</span></div>
-        <div class="line">Fertilizer needed: <span class="highlight">${fertNeeded.toFixed(2)} kg</span></div>
-        <div class="line">Estimated fertilizer cost: <span class="highlight">₹ ${totalCost.toFixed(2)}</span></div>
-        <div class="muted" style="margin-top:6px">Suggestion: increasing cultivated area or improving base yield (better seeds) may be cheaper than large fertilizer doses.</div>`;
-    }
-    document.getElementById('crops-calc').addEventListener('click', cropsCalculate);
-    document.getElementById('crops-reset').addEventListener('click', ()=>{ ['area','baseYield','incPerKg','costPerKg','targetYield'].forEach(id=>document.getElementById(id).value=''); document.getElementById('crops-result').innerHTML=''; })
-
-    // --------- Economics logic (quadratic profit model) ---------
-    function econCalculate(){
-      const a = parseFloat(document.getElementById('a').value);
-      const b = parseFloat(document.getElementById('b').value);
-      const c = parseFloat(document.getElementById('c').value);
-      const F = parseFloat(document.getElementById('f').value) || 0;
-      const out = document.getElementById('econ-result'); out.innerHTML='';
-      if(!a || !b || b<=0 || c==null){ out.innerHTML='<div style="color:#b00020">⚠ Enter valid a (>0), b (>0) and c.</div>'; return }
-
-      const qOpt = (a - c) / (2*b);
-      if(qOpt <= 0){ out.innerHTML=<h3>No interior maximum</h3><div class="line">With these parameters, producing more doesn't increase profit. Consider checking values.</div>; return }
-      const price = a - b*qOpt;
-      const revenue = price * qOpt;
-      const cost = c * qOpt + F;
-      const profit = revenue - cost;
-      out.innerHTML = `<h3>Optimal production</h3>
-        <div class="line">Optimal quantity Q* = <span class="highlight">${qOpt.toFixed(2)}</span> units</div>
-        <div class="line">Selling price at Q*: <span class="highlight">₹ ${price.toFixed(2)}</span></div>
-        <div class="line">Estimated profit at Q*: <span class="highlight">₹ ${profit.toFixed(2)}</span></div>
-        <div class="muted" style="margin-top:6px">Note: This uses a simple linear demand model. For real markets, many more factors exist.</div>`;
-    }
-    document.getElementById('econ-calc').addEventListener('click', econCalculate);
-    document.getElementById('econ-reset').addEventListener('click', ()=>{ ['a','b','c','f'].forEach(id=>document.getElementById(id).value=''); document.getElementById('econ-result').innerHTML=''; })
-
-    // --------- Maps logic (brute-force TSP for small n) ---------
-    const points = [];
-    function updatePointsList(){
-      const el = document.getElementById('points-list');
-      if(points.length===0){ el.textContent = 'No points added'; return }
-      el.innerHTML = points.map((p,i)=><div>(${p.x}, ${p.y}) — #${i+1}</div>).join('');
-    }
-    document.getElementById('add-point').addEventListener('click', ()=>{
-      const x = parseFloat(document.getElementById('map-x').value);
-      const y = parseFloat(document.getElementById('map-y').value);
-      if(isNaN(x) || isNaN(y)){ alert('Enter numeric x and y'); return }
-      if(points.length>=7){ alert('Max 7 points for demo.'); return }
-      points.push({x: +x, y: +y});
-      document.getElementById('map-x').value=''; document.getElementById('map-y').value='';
-      updatePointsList();
-    })
-    document.getElementById('clear-points').addEventListener('click', ()=>{ points.length=0; updatePointsList(); document.getElementById('maps-result').innerHTML=''; })
-
-    function distance(a,b){ return Math.hypot(a.x-b.x, a.y-b.y); }
-
-    function permutations(arr){
-      if(arr.length<=1) return [arr.slice()];
-      const res=[];
-      for(let i=0;i<arr.length;i++){
-        const cur = arr[i];
-        const rest = arr.slice(0,i).concat(arr.slice(i+1));
-        for(const p of permutations(rest)) res.push([cur].concat(p));
-      }
-      return res;
     }
 
-    document.getElementById('maps-calc').addEventListener('click', ()=>{
-      const out = document.getElementById('maps-result'); out.innerHTML='';
-      if(points.length<2){ out.innerHTML='<div style="color:#b00020">⚠ Add at least two points.</div>'; return }
-      // brute-force permutations (visit all starting from first point as start)
-      const perms = permutations(points);
-      let best = null; let bestOrder=null;
-      for(const p of perms){
-        // compute path length visiting in order
-        let len=0;
-        for(let i=0;i<p.length-1;i++) len += distance(p[i], p[i+1]);
-        // optional: do not return to start
-        if(best===null || len<best){ best=len; bestOrder=p.slice(); }
-      }
-      // present order indices
-      const orderIdx = bestOrder.map(pt=> points.indexOf(pt)+1);
-      out.innerHTML = `<h3>Shortest visiting order</h3>
-        <div class="line">Order (point numbers): <span class="highlight">${orderIdx.join(' → ')}</span></div>
-        <div class="line">Total path length: <span class="highlight">${best.toFixed(3)} km</span></div>
-        <div class="muted" style="margin-top:6px">Note: This is plain Euclidean distance in 2D (for demonstration). For real maps use routing APIs.</div>`;
-    })
-
-    // small accessibility: press Enter to add point
-    document.getElementById('map-y').addEventListener('keydown', (e)=>{ if(e.key==='Enter') document.getElementById('add-point').click(); })
-
+    drawGraph();
   </script>
 </body>
 </html>
