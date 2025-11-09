@@ -1,548 +1,286 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Maxima & Minima — Real-life Optimizer</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maxima & Minima in Real Life — Krima’s Project</title>
   <style>
-    :root{
-      --sidebar-top: #0f1720;
-      --sidebar-bottom: #09101a;
-      --accent: #1976d2;
-      --accent-2: #00c6ff;
-      --card-bg: rgba(255,255,255,0.04);
-      --muted: #bfc8d6;
-      --glass: rgba(255,255,255,0.03);
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      background-color: #1c1c1c;
+      color: #f0f0f0;
+      display: flex;
+      height: 100vh;
     }
-    *{box-sizing:border-box}
-    body{ margin:0; font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color:#e8eef8; background:linear-gradient(180deg,#0a0d10,#071018); min-height:100vh; display:flex; }
+
     /* Sidebar */
     .sidebar {
-      width: 240px;
-      background: linear-gradient(180deg,var(--sidebar-top),var(--sidebar-bottom));
-      padding:28px 18px;
-      border-right:1px solid rgba(255,255,255,0.03);
-      display:flex; flex-direction:column; gap:20px;
+      width: 220px;
+      background: linear-gradient(180deg, #242424, #0e0e0e);
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-right: 1px solid #333;
     }
-    .brand {
-      font-weight:700; letter-spacing:0.6px; font-size:18px; color:#fff; text-align:center;
-      padding:8px 10px; border-radius:10px; background: linear-gradient(90deg,var(--accent),var(--accent-2));
-      box-shadow: 0 6px 18px rgba(0,0,0,0.6);
-    }
-    .nav {
-      display:flex; flex-direction:column; gap:8px; margin-top:6px;
-    }
-    .nav button {
-      background:transparent; color:var(--muted); border:none; text-align:left; padding:12px 12px; border-radius:10px; cursor:pointer;
-      transition: all 160ms ease; font-weight:600;
-    }
-    .nav button:hover { transform: translateY(-3px); color:#fff; background: rgba(255,255,255,0.02); }
-    .nav button.active { background: linear-gradient(90deg, rgba(25,118,210,0.14), rgba(0,198,255,0.06)); color:#fff; box-shadow: 0 6px 18px rgba(0,0,0,0.5); }
 
-    .hint { font-size:12px; color:var(--muted); margin-top:6px; text-align:center; padding:6px 8px; background:transparent; border-radius:8px; }
-    /* Main area */
-    .main {
-      flex:1; padding:28px; overflow:auto; display:flex; justify-content:center; align-items:flex-start;
+    .sidebar h2 {
+      margin-bottom: 25px;
+      font-size: 1.1rem;
+      color: #fff;
     }
-    .container {
-      width:100%; max-width:1050px;
-      display:grid; grid-template-columns: 1fr; gap:18px;
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: #ccc;
+      font-size: 1rem;
+      padding: 12px 20px;
+      text-align: left;
+      width: 100%;
+      cursor: pointer;
+      transition: background 0.2s;
     }
+
+    .tab-btn:hover, .tab-btn.active {
+      background: #333;
+      color: #fff;
+    }
+
+    /* Main content */
+    .content {
+      flex-grow: 1;
+      padding: 40px;
+      background: #1c1c1c;
+      overflow-y: auto;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards */
     .card {
-      background: var(--card-bg); border-radius:14px; padding:18px; box-shadow: 0 8px 30px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.02);
-      transition: transform 200ms ease;
+      background: #2a2a2a;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      max-width: 500px;
     }
-    .card h2 { color: #dff1ff; margin:0 0 8px 0; font-size:18px; }
-    .card p { color: var(--muted); margin:0 0 10px 0; font-size:13px; }
-    .row { display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end; margin-top:10px; }
-    label { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; }
-    input[type="number"], input[type="text"], select {
-      background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.03); color:#e9f5ff; padding:10px 12px; border-radius:8px;
-      min-width:160px; outline:none;
-    }
-    input[type="number"]::placeholder, input[type="text"]::placeholder { color:#9fb0c9; }
-    button.btn {
-      background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:white; border:none; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:700;
-    }
-    button.ghost { background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--muted); padding:9px 12px; border-radius:8px; cursor:pointer; }
-    .result { margin-top:12px; background:var(--glass); padding:12px; border-radius:10px; font-size:14px; color:#eaf6ff; border:1px solid rgba(255,255,255,0.02); }
-    .muted { color:var(--muted); font-size:13px; }
-    .highlight { color:#bfeaff; font-weight:700; }
-    footer { text-align:center; color:var(--muted); margin-top:12px; font-size:13px; }
 
-    /* Responsive */
-    @media (max-width:900px){
-      .sidebar { display:none; }
-      body { padding:14px; }
-      .main { padding:0; }
+    .card h3 {
+      margin-top: 0;
+      color: #fff;
+    }
+
+    input, select, button {
+      background: #333;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 8px;
+      padding: 10px;
+      width: 100%;
+      margin: 8px 0;
+    }
+
+    button {
+      cursor: pointer;
+      background: #3b82f6;
+      border: none;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #2563eb;
+    }
+
+    footer {
+      text-align: center;
+      color: #777;
+      font-size: 0.9rem;
+      margin-top: 40px;
+    }
+
+    #map {
+      height: 400px;
+      width: 100%;
+      border-radius: 12px;
     }
   </style>
 </head>
 <body>
-  <aside class="sidebar" aria-label="Navigation">
-    <div class="brand">MinMax — Project</div>
-    <nav class="nav" role="navigation" aria-label="Main tabs">
-      <button id="tab-shapes" class="active" data-target="shapes">🔷 Shapes (Surface area)</button>
-      <button id="tab-crops" data-target="crops">🌾 Agriculture (Yield & Fertilizer)</button>
-      <button id="tab-econ" data-target="economics">💹 Economics (Profit max)</button>
-      <button id="tab-maps" data-target="maps">🗺 Maps (Real route)</button>
-    </nav>
-    <div class="hint">Click a tab to switch calculators</div>
-    <div style="flex:1"></div>
-    <div style="font-size:12px; color:var(--muted); text-align:center;">2025 © Krima Engineering Mathematics Project</div>
-  </aside>
+  <div class="sidebar">
+    <h2>Maxima & Minima</h2>
+    <button class="tab-btn active" data-tab="shapes">Shapes</button>
+    <button class="tab-btn" data-tab="crops">Crops</button>
+    <button class="tab-btn" data-tab="economics">Economics</button>
+    <button class="tab-btn" data-tab="maps">Maps</button>
+  </div>
 
-  <main class="main">
-    <div class="container">
-
-      <!-- SHAPES -->
-      <section id="shapes" class="card" role="region" aria-labelledby="tab-shapes">
-        <h2>🔷 Shape Surface Area — minimize material</h2>
-        <p class="muted">Enter volume (cm³) and choose a shape. The calculator gives optimal dimensions (approx) and surface area.</p>
-        <div class="row">
-          <div>
-            <label for="shapeSelect">Shape</label>
-            <select id="shapeSelect">
-              <option value="">-- select --</option>
-              <option value="cube">Cube</option>
-              <option value="cuboid">Cuboid (optimal = cube)</option>
-              <option value="cylinder">Cylinder</option>
-              <option value="sphere">Sphere</option>
-              <option value="cone">Cone</option>
-              <option value="hemisphere">Hemisphere</option>
-              <option value="squarePyramid">Square Pyramid</option>
-              <option value="triangularPrism">Triangular Prism</option>
-              <option value="torus">Torus (approx)</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="volumeInput">Volume (cm³)</label>
-            <input id="volumeInput" type="number" placeholder="e.g. 1000" min="0" />
-          </div>
-
-          <div style="align-self:flex-end;">
-            <button id="shapesCalc" class="btn">Calculate</button>
-            <button id="shapesReset" class="ghost">Reset</button>
-          </div>
-        </div>
-
-        <div id="shapesResult" class="result" aria-live="polite" style="display:none"></div>
-      </section>
-
-      <!-- CROPS -->
-      <section id="crops" class="card" role="region" aria-labelledby="tab-crops" style="display:none">
-        <h2>🌾 Agriculture — minimize fertilizer cost</h2>
-        <p class="muted">Simple model: base yield per hectare + yield increase per kg fertilizer. Compute fertilizer needed to reach a target total yield.</p>
-        <div class="row">
-          <div>
-            <label for="areaInput">Area (ha)</label>
-            <input id="areaInput" type="number" step="0.01" placeholder="e.g. 2.0" min="0" />
-          </div>
-          <div>
-            <label for="baseYield">Base yield (kg/ha)</label>
-            <input id="baseYield" type="number" placeholder="e.g. 3000" min="0" />
-          </div>
-          <div>
-            <label for="incPerKg">Yield increase per kg fertilizer (kg/kg)</label>
-            <input id="incPerKg" type="number" step="0.01" placeholder="e.g. 0.5" min="0" />
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:8px">
-          <div>
-            <label for="costPerKg">Cost per kg fertilizer (₹)</label>
-            <input id="costPerKg" type="number" placeholder="e.g. 20" min="0" />
-          </div>
-          <div>
-            <label for="targetYield">Target total yield (kg)</label>
-            <input id="targetYield" type="number" placeholder="e.g. 8000" min="0" />
-          </div>
-          <div style="align-self:flex-end">
-            <button id="cropsCalc" class="btn">Calculate</button>
-            <button id="cropsReset" class="ghost">Reset</button>
-          </div>
-        </div>
-
-        <div id="cropsResult" class="result" aria-live="polite" style="display:none"></div>
-      </section>
-
-      <!-- ECONOMICS -->
-      <section id="economics" class="card" role="region" aria-labelledby="tab-econ" style="display:none">
-        <h2>💹 Economics — maximize profit (simple demand)</h2>
-        <p class="muted">Demand: P = a − bQ. Cost: C = cQ + F. Profit max occurs at Q* = (a − c) / (2b) (if positive).</p>
-        <div class="row">
-          <div>
-            <label for="aInput">Demand intercept a (price at Q=0)</label>
-            <input id="aInput" type="number" placeholder="e.g. 200" min="0" />
-          </div>
-          <div>
-            <label for="bInput">Demand slope b (price drop per unit)</label>
-            <input id="bInput" type="number" step="0.01" placeholder="e.g. 0.5" min="0.0001" />
-          </div>
-          <div>
-            <label for="cInput">Variable cost per unit c</label>
-            <input id="cInput" type="number" placeholder="e.g. 20" min="0" />
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:8px">
-          <div>
-            <label for="fInput">Fixed cost F (₹)</label>
-            <input id="fInput" type="number" placeholder="e.g. 1000" min="0" />
-          </div>
-          <div style="align-self:flex-end">
-            <button id="econCalc" class="btn">Calculate</button>
-            <button id="econReset" class="ghost">Reset</button>
-          </div>
-        </div>
-
-        <div id="econResult" class="result" aria-live="polite" style="display:none"></div>
-      </section>
-
-      <!-- MAPS -->
-      <section id="maps" class="card" role="region" aria-labelledby="tab-maps" style="display:none">
-        <h2>🗺 Maps — choose start & end (Google Maps)</h2>
-        <p class="muted">Click on the map to set <strong>Start</strong> then <strong>End</strong>. Or enter addresses. Press <em>Get Route</em> to compute a real route with distance and duration.</p>
-
-        <div class="row">
-          <div>
-            <label for="startAddr">Start address (optional)</label>
-            <input id="startAddr" type="text" placeholder="Click map or type an address" />
-          </div>
-          <div>
-            <label for="endAddr">End address (optional)</label>
-            <input id="endAddr" type="text" placeholder="Click map or type an address" />
-          </div>
-          <div style="align-self:flex-end">
-            <button id="getRoute" class="btn">Get Route</button>
-            <button id="clearRoute" class="ghost">Clear</button>
-          </div>
-        </div>
-
-        <div id="map" style="margin-top:12px; width:100%; height:420px; border-radius:10px; overflow:hidden;"></div>
-
-        <div id="mapsResult" class="result" aria-live="polite" style="display:none; margin-top:12px;"></div>
-
-        <p class="muted" style="margin-top:8px">Note: Replace the API key inside the script tag at the bottom. Directions use drive mode by default.</p>
-      </section>
-
+  <div class="content">
+    <!-- Shapes Tab -->
+    <div id="shapes" class="tab-content active">
+      <div class="card">
+        <h3>Shape Calculator</h3>
+        <select id="shapeType">
+          <option value="cube">Cube</option>
+          <option value="sphere">Sphere</option>
+          <option value="cylinder">Cylinder</option>
+        </select>
+        <input type="number" id="value1" placeholder="Enter value (side/radius)" />
+        <input type="number" id="value2" placeholder="Height (for cylinder only)" />
+        <button id="calcShape">Calculate</button>
+        <p id="shapeResult"></p>
+      </div>
     </div>
-  </main>
+
+    <!-- Crops Tab -->
+    <div id="crops" class="tab-content">
+      <div class="card">
+        <h3>Crop Yield Optimization</h3>
+        <input type="number" id="fertilizer" placeholder="Fertilizer (kg)" />
+        <button id="calcCrops">Calculate Yield</button>
+        <p id="cropResult"></p>
+      </div>
+    </div>
+
+    <!-- Economics Tab -->
+    <div id="economics" class="tab-content">
+      <div class="card">
+        <h3>Profit Maximization</h3>
+        <input type="number" id="price" placeholder="Price per unit" />
+        <input type="number" id="cost" placeholder="Cost per unit" />
+        <input type="number" id="quantity" placeholder="Quantity sold" />
+        <button id="calcEco">Calculate Profit</button>
+        <p id="ecoResult"></p>
+      </div>
+    </div>
+
+    <!-- Maps Tab -->
+    <div id="maps" class="tab-content">
+      <div class="card">
+        <h3>Shortest Distance Map</h3>
+        <select id="start">
+          <option value="">Select start</option>
+          <option value="Ahmedabad">Ahmedabad</option>
+          <option value="Baroda">Baroda</option>
+          <option value="Surat">Surat</option>
+          <option value="Rajkot">Rajkot</option>
+        </select>
+        <select id="end">
+          <option value="">Select destination</option>
+          <option value="Ahmedabad">Ahmedabad</option>
+          <option value="Baroda">Baroda</option>
+          <option value="Surat">Surat</option>
+          <option value="Rajkot">Rajkot</option>
+        </select>
+        <button id="showRoute">Show Route</button>
+        <div id="map"></div>
+      </div>
+    </div>
+
+    <footer>2025 © Krima Engineering Mathematics Project</footer>
+  </div>
 
   <script>
-    /* ------------------------------
-       Tab switching (robust, no globals)
-       ------------------------------ */
-    (function(){
-      const tabs = [
-        {btnId:'tab-shapes', panelId:'shapes'},
-        {btnId:'tab-crops',  panelId:'crops'},
-        {btnId:'tab-econ',   panelId:'economics'},
-        {btnId:'tab-maps',   panelId:'maps'}
-      ];
-      tabs.forEach(t=>{
-        const btn = document.getElementById(t.btnId);
-        btn.addEventListener('click', (ev)=>{
-          // remove active
-          tabs.forEach(x=>{
-            document.getElementById(x.btnId).classList.remove('active');
-            document.getElementById(x.panelId).style.display = 'none';
-          });
-          // set active
-          btn.classList.add('active');
-          document.getElementById(t.panelId).style.display = 'block';
-          // small scroll to top of container to show results
-          window.scrollTo({top:0, behavior:'smooth'});
+    window.onload = function() {
+      // TAB SWITCHING
+      const tabs = document.querySelectorAll(".tab-btn");
+      const contents = document.querySelectorAll(".tab-content");
+
+      tabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+          tabs.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          const target = btn.getAttribute("data-tab");
+          contents.forEach(c => c.classList.remove("active"));
+          document.getElementById(target).classList.add("active");
         });
       });
-    })();
 
-    /* ------------------------------
-       SHAPES: calculations (clean)
-       ------------------------------ */
-    (function(){
-      const el = {
-        shape: document.getElementById('shapeSelect'),
-        vol: document.getElementById('volumeInput'),
-        btn: document.getElementById('shapesCalc'),
-        reset: document.getElementById('shapesReset'),
-        out: document.getElementById('shapesResult')
-      };
-      el.btn.addEventListener('click', ()=>{
-        el.out.style.display='none'; el.out.innerHTML='';
-        const shape = el.shape.value;
-        const volume = parseFloat(el.vol.value);
-        if(!shape || !volume || volume <= 0){ el.out.style.display='block'; el.out.innerHTML = '<div style="color:#ffb3b3">⚠ Please select shape and enter valid positive volume.</div>'; return; }
-        const pi = Math.PI;
-        let html = '';
-        if(shape==='cube' || shape==='cuboid'){
-          const a = Math.cbrt(volume);
-          const sa = 6*a*a;
-          html = `<h3>Shape: ${shape==='cube'?'Cube':'Cuboid (optimal = cube)'}</h3>
-                  <div class="muted">Side ≈ <span class="highlight">${a.toFixed(2)} cm</span></div>
-                  <div class="muted">Minimum Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
-        } else if(shape==='cylinder'){
-          const r = Math.cbrt(volume / (2*pi));
-          const h = 2*r;
-          const sa = 2*pi*r*(r+h);
-          html = `<h3>Cylinder (optimal approx)</h3>
-                  <div class="muted">Radius ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>
-                  <div class="muted">Height ≈ <span class="highlight">${h.toFixed(2)} cm</span></div>
-                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
-        } else if(shape==='sphere'){
-          const r = Math.cbrt((3*volume)/(4*pi));
-          const sa = 4*pi*r*r;
-          html = `<h3>Sphere</h3>
-                  <div class="muted">Radius ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>
-                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
-        } else if(shape==='cone'){
-          const r = Math.cbrt((3*volume)/(Math.PI*Math.sqrt(4)));
-          const h = Math.sqrt(3)*r;
-          const l = Math.sqrt(r*r + h*h);
-          const sa = Math.PI*r*(r + l);
-          html = `<h3>Cone (approx)</h3>
-                  <div class="muted">Radius ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>
-                  <div class="muted">Height ≈ <span class="highlight">${h.toFixed(2)} cm</span></div>
-                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
-        } else if(shape==='hemisphere'){
-          const r = Math.cbrt((3*volume)/(2*pi));
-          const sa = 3*pi*r*r;
-          html = `<h3>Hemisphere</h3>
-                  <div class="muted">Radius ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>
-                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
-        } else if(shape==='squarePyramid'){
-          const a = Math.cbrt(volume);
-          const h = a;
-          const sa = a*a + 2*a*Math.sqrt((a/2)*(a/2) + h*h);
-          html = `<h3>Square Pyramid (approx)</h3>
-                  <div class="muted">Base side ≈ <span class="highlight">${a.toFixed(2)} cm</span></div>
-                  <div class="muted">Height ≈ <span class="highlight">${h.toFixed(2)} cm</span></div>
-                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
-        } else if(shape==='triangularPrism'){
-          const side = Math.cbrt(volume);
-          const sa = 5*side*side;
-          html = `<h3>Triangular Prism (rough)</h3>
-                  <div class="muted">Characteristic side ≈ <span class="highlight">${side.toFixed(2)} cm</span></div>
-                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
-        } else if(shape==='torus'){
-          const r = Math.cbrt(volume / (2*Math.PI*Math.PI));
-          const R = 2*r;
-          const sa = 4*Math.PI*Math.PI*R*r;
-          html = `<h3>Torus (approx)</h3>
-                  <div class="muted">Minor radius r ≈ <span class="highlight">${r.toFixed(2)} cm</span></div>
-                  <div class="muted">Major radius R ≈ <span class="highlight">${R.toFixed(2)} cm</span></div>
-                  <div class="muted">Surface Area ≈ <span class="highlight">${sa.toFixed(2)} cm²</span></div>`;
+      // SHAPE CALCULATION
+      document.getElementById("calcShape").addEventListener("click", () => {
+        const shape = document.getElementById("shapeType").value;
+        const v1 = parseFloat(document.getElementById("value1").value);
+        const v2 = parseFloat(document.getElementById("value2").value);
+        let result = "";
+        if (shape === "cube") {
+          result = Volume: ${(v1 ** 3).toFixed(2)} | Surface Area: ${(6 * v1 ** 2).toFixed(2)};
+        } else if (shape === "sphere") {
+          result = Volume: ${((4/3) * Math.PI * v1 ** 3).toFixed(2)} | Surface Area: ${(4 * Math.PI * v1 ** 2).toFixed(2)};
+        } else if (shape === "cylinder") {
+          result = Volume: ${(Math.PI * v1 ** 2 * v2).toFixed(2)} | Surface Area: ${(2 * Math.PI * v1 * (v1 + v2)).toFixed(2)};
         }
-        el.out.style.display='block';
-        el.out.innerHTML = html + '<div class="muted" style="margin-top:8px">Tip: Spheres tend to minimize surface area for a given volume.</div>';
+        document.getElementById("shapeResult").textContent = result;
       });
 
-      el.reset.addEventListener('click', ()=>{
-        el.shape.value=''; el.vol.value=''; el.out.style.display='none'; el.out.innerHTML='';
+      // CROPS
+      document.getElementById("calcCrops").addEventListener("click", () => {
+        const f = parseFloat(document.getElementById("fertilizer").value);
+        const yieldVal = -(f - 50) ** 2 / 25 + 100; // parabolic max around f=50
+        document.getElementById("cropResult").textContent = Optimal yield: ${yieldVal.toFixed(2)} units;
       });
-    })();
 
-    /* ------------------------------
-       CROPS
-       ------------------------------ */
-    (function(){
-      const el = {
-        area: document.getElementById('areaInput'),
-        base: document.getElementById('baseYield'),
-        inc: document.getElementById('incPerKg'),
-        cost: document.getElementById('costPerKg'),
-        target: document.getElementById('targetYield'),
-        btn: document.getElementById('cropsCalc'),
-        reset: document.getElementById('cropsReset'),
-        out: document.getElementById('cropsResult')
-      };
-      el.btn.addEventListener('click', ()=>{
-        el.out.style.display='none'; el.out.innerHTML='';
-        const area = parseFloat(el.area.value), base = parseFloat(el.base.value), inc = parseFloat(el.inc.value), cost = parseFloat(el.cost.value), target = parseFloat(el.target.value);
-        if(isNaN(area) || isNaN(base) || isNaN(inc) || isNaN(cost) || isNaN(target) || area<=0 || base<=0 || inc<=0 || cost<0 || target<=0){
-          el.out.style.display='block'; el.out.innerHTML = '<div style="color:#ffb3b3">⚠ Fill all fields with valid positive numbers (cost can be zero).</div>'; return;
-        }
-        const baseTotal = base * area;
-        if(baseTotal >= target){
-          el.out.style.display='block';
-          el.out.innerHTML = `<h3>Already meets target</h3>
-            <div class="muted">Base total yield: <span class="highlight">${baseTotal.toFixed(0)} kg</span></div>
-            <div class="muted" style="margin-top:6px">No extra fertilizer required.</div>`;
+      // ECONOMICS
+      document.getElementById("calcEco").addEventListener("click", () => {
+        const p = parseFloat(document.getElementById("price").value);
+        const c = parseFloat(document.getElementById("cost").value);
+        const q = parseFloat(document.getElementById("quantity").value);
+        const profit = (p - c) * q;
+        document.getElementById("ecoResult").textContent = Profit: ₹${profit.toFixed(2)};
+      });
+
+      // MAPS
+      let map, directionsService, directionsRenderer;
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 22.3072, lng: 73.1812 },
+          zoom: 7,
+        });
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(map);
+      }
+      window.initMap = initMap;
+
+      document.getElementById("showRoute").addEventListener("click", () => {
+        const start = document.getElementById("start").value;
+        const end = document.getElementById("end").value;
+        if (!start || !end) {
+          alert("Please select both locations.");
           return;
         }
-        const neededExtra = target - baseTotal;
-        const fertNeeded = neededExtra / inc;
-        const totalCost = fertNeeded * cost;
-        el.out.style.display='block';
-        el.out.innerHTML = `<h3>Fertilizer plan</h3>
-          <div class="muted">Base total yield: <span class="highlight">${baseTotal.toFixed(0)} kg</span></div>
-          <div class="muted">Extra yield needed: <span class="highlight">${neededExtra.toFixed(0)} kg</span></div>
-          <div class="muted">Fertilizer needed: <span class="highlight">${fertNeeded.toFixed(2)} kg</span></div>
-          <div class="muted">Estimated fertilizer cost: <span class="highlight">₹ ${totalCost.toFixed(2)}</span></div>
-          <div class="muted" style="margin-top:6px">Suggestion: improving base yield or area can be more cost-effective than heavy fertilizer use.</div>`;
-      });
-
-      el.reset.addEventListener('click', ()=>{
-        [el.area, el.base, el.inc, el.cost, el.target].forEach(i=>i.value=''); el.out.style.display='none'; el.out.innerHTML='';
-      });
-    })();
-
-    /* ------------------------------
-       ECONOMICS
-       ------------------------------ */
-    (function(){
-      const el = {
-        a: document.getElementById('aInput'),
-        b: document.getElementById('bInput'),
-        c: document.getElementById('cInput'),
-        f: document.getElementById('fInput'),
-        btn: document.getElementById('econCalc'),
-        reset: document.getElementById('econReset'),
-        out: document.getElementById('econResult')
-      };
-      el.btn.addEventListener('click', ()=>{
-        el.out.style.display='none'; el.out.innerHTML='';
-        const a = parseFloat(el.a.value), b = parseFloat(el.b.value), c = parseFloat(el.c.value), F = parseFloat(el.f.value) || 0;
-        if(isNaN(a) || isNaN(b) || isNaN(c) || a<=0 || b<=0){ el.out.style.display='block'; el.out.innerHTML = '<div style="color:#ffb3b3">⚠ Enter valid numbers: a>0, b>0, c numeric.</div>'; return; }
-        const qOpt = (a - c) / (2*b);
-        if(qOpt <= 0){ el.out.style.display='block'; el.out.innerHTML = <h3>No interior maximum</h3><div class="muted">With these parameters, optimal Q is ≤ 0. Check inputs.</div>; return; }
-        const price = a - b*qOpt;
-        const revenue = price * qOpt;
-        const cost = c * qOpt + F;
-        const profit = revenue - cost;
-        el.out.style.display='block';
-        el.out.innerHTML = `<h3>Optimal production</h3>
-          <div class="muted">Q* = <span class="highlight">${qOpt.toFixed(2)}</span> units</div>
-          <div class="muted">Price at Q*: <span class="highlight">₹ ${price.toFixed(2)}</span></div>
-          <div class="muted">Estimated profit: <span class="highlight">₹ ${profit.toFixed(2)}</span></div>
-          <div class="muted" style="margin-top:6px">This is a simple linear-demand model for demonstration.</div>`;
-      });
-      el.reset.addEventListener('click', ()=>{ [el.a,el.b,el.c,el.f].forEach(x=>x.value=''); el.out.style.display='none'; el.out.innerHTML=''; });
-    })();
-
-    /* ------------------------------
-       MAPS: Google Maps integration
-       - Click map to set Start, then End.
-       - Or type addresses and press Get Route.
-       - Uses DirectionsService and DirectionsRenderer.
-       ------------------------------ */
-    let map, directionsService, directionsRenderer, startMarker, endMarker;
-    (function(){
-      // basic DOM refs
-      const startInput = document.getElementById('startAddr');
-      const endInput   = document.getElementById('endAddr');
-      const getRouteBtn = document.getElementById('getRoute');
-      const clearBtn = document.getElementById('clearRoute');
-      const mapsResult = document.getElementById('mapsResult');
-
-      // Called by Google Maps script callback to initialize map
-      window.initMap = function() {
-        // default center
-        const center = { lat: 23.0225, lng: 72.5714 }; // Ahmedabad as neutral example
-        map = new google.maps.Map(document.getElementById('map'), { center, zoom: 11, mapTypeControl:false });
-
-        directionsService = new google.maps.DirectionsService();
-        directionsRenderer = new google.maps.DirectionsRenderer({ suppressMarkers: true, preserveViewport: true });
-        directionsRenderer.setMap(map);
-
-        // click handler: set start -> end
-        map.addListener('click', (ev) => {
-          const pos = { lat: ev.latLng.lat(), lng: ev.latLng.lng() };
-          if(!startMarker){
-            startMarker = new google.maps.Marker({ position: pos, map, label: 'A' });
-            startInput.value = ${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)};
-          } else if(!endMarker){
-            endMarker = new google.maps.Marker({ position: pos, map, label: 'B' });
-            endInput.value = ${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)};
-          } else {
-            // rotate: clear previous and set new start
-            startMarker.setMap(null); startMarker = endMarker;
-            startMarker.setLabel('A');
-            endMarker = new google.maps.Marker({ position: pos, map, label: 'B' });
-            startInput.value = ${startMarker.getPosition().lat().toFixed(6)}, ${startMarker.getPosition().lng().toFixed(6)};
-            endInput.value = ${endMarker.getPosition().lat().toFixed(6)}, ${endMarker.getPosition().lng().toFixed(6)};
+        directionsService.route(
+          {
+            origin: start,
+            destination: end,
+            travelMode: google.maps.TravelMode.DRIVING,
+          },
+          (response, status) => {
+            if (status === "OK") {
+              directionsRenderer.setDirections(response);
+            } else {
+              alert("Route not found: " + status);
+            }
           }
-        });
-
-        // give marker drag ability (optional)
-        // initialize empty
-        mapsResult.style.display='none';
-      };
-
-      // run route
-      getRouteBtn.addEventListener('click', ()=>{
-        mapsResult.style.display='none'; mapsResult.innerHTML='';
-        const startVal = startInput.value.trim();
-        const endVal = endInput.value.trim();
-        if(!startVal || !endVal){ mapsResult.style.display='block'; mapsResult.innerHTML = '<div style="color:#ffb3b3">⚠ Provide both start and end (either click map or write addresses/coords).</div>'; return; }
-
-        // clear previous route
-        directionsRenderer.set('directions', null);
-
-        // if inputs look like coordinates "lat, lng", convert to LatLng, else use address string
-        const parseMaybeLatLng = (s)=>{
-          const parts = s.split(',').map(p=>p.trim());
-          if(parts.length===2 && !isNaN(Number(parts[0])) && !isNaN(Number(parts[1]))){
-            return { lat: Number(parts[0]), lng: Number(parts[1]) };
-          }
-          return s; // treat as address string
-        };
-
-        const origin = parseMaybeLatLng(startVal);
-        const destination = parseMaybeLatLng(endVal);
-
-        const request = {
-          origin,
-          destination,
-          travelMode: google.maps.TravelMode.DRIVING
-        };
-
-        directionsService.route(request, (result, status) => {
-          if(status === 'OK'){
-            directionsRenderer.setDirections(result);
-            // auto-place markers at endpoints (clean)
-            const routeLeg = result.routes[0].legs[0];
-            if(startMarker){ startMarker.setMap(null); startMarker=null; }
-            if(endMarker){ endMarker.setMap(null); endMarker=null; }
-            startMarker = new google.maps.Marker({ position: routeLeg.start_location, map, label: 'A' });
-            endMarker   = new google.maps.Marker({ position: routeLeg.end_location, map, label: 'B' });
-
-            // show distance & duration
-            const distanceText = routeLeg.distance ? routeLeg.distance.text : 'N/A';
-            const durationText = routeLeg.duration ? routeLeg.duration.text : 'N/A';
-            mapsResult.style.display='block';
-            mapsResult.innerHTML = `<h3>Route</h3>
-              <div class="muted">From: <span class="highlight">${routeLeg.start_address}</span></div>
-              <div class="muted">To: <span class="highlight">${routeLeg.end_address}</span></div>
-              <div class="muted">Distance: <span class="highlight">${distanceText}</span></div>
-              <div class="muted">Estimated time: <span class="highlight">${durationText}</span></div>`;
-          } else {
-            mapsResult.style.display='block';
-            mapsResult.innerHTML = <div style="color:#ffb3b3">⚠ Route failed: ${status}. Check addresses or your API key and billing on Google Cloud Console.</div>;
-          }
-        });
+        );
       });
-
-      clearBtn.addEventListener('click', ()=>{
-        startInput.value=''; endInput.value=''; mapsResult.style.display='none'; mapsResult.innerHTML='';
-        if(startMarker){ startMarker.setMap(null); startMarker=null; }
-        if(endMarker){ endMarker.setMap(null); endMarker=null; }
-        if(directionsRenderer) directionsRenderer.set('directions', null);
-      });
-    })();
+    };
   </script>
 
-  <!-- ====== Google Maps JS (replace API KEY below) ======
-       IMPORTANT: Replace YOUR_GOOGLE_MAPS_API_KEY_HERE with your API key.
-       The API must have Maps JavaScript API and Directions API enabled.
-       Use "async defer" and callback "initMap" defined above.
-  ======================================================= -->
-  <script
-    async
-    defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZXTwjD6KgRTDOu924Z_mmw43v3ANAUR0&libraries=places&callback=initMap"
-  ></script>
+  <!-- Replace YOUR_API_KEY with your actual Google Maps API key -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZXTwjD6KgRTDOu924Z_mmw43v3ANAUR0&callback=initMap" async defer></script>
 </body>
 </html>
-
