@@ -172,7 +172,7 @@
         html = `<h3>Shape: Sphere</h3>
                 <div class="data-line">Radius = <span class="highlight">${r.toFixed(2)} cm</span></div>
                 <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
-                <p>🌍 A sphere has the least surface area for a given volume — it’s the most efficient shape!</p>`;
+                <p> A sphere has the least surface area for a given volume — it’s the most efficient shape!</p>`;
       } 
       else if (shape === "cone") {
         const r = Math.cbrt((3 * volume) / (Math.PI * Math.sqrt(4)));
@@ -192,7 +192,7 @@
         html = `<h3>Shape: Hemisphere</h3>
                 <div class="data-line">Radius = <span class="highlight">${r.toFixed(2)} cm</span></div>
                 <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
-                <p>🌗 Half of a sphere — slightly less efficient than a full sphere.</p>`;
+                <p> Half of a sphere — slightly less efficient than a full sphere.</p>`;
       }
       else if (shape === "squarePyramid") {
         const a = Math.cbrt(volume); 
@@ -210,7 +210,7 @@
         html = `<h3>Shape: Rectangular Prism</h3>
                 <div class="data-line">Optimal Dimensions: L=W=H=${a.toFixed(2)} cm</div>
                 <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
-                <p>📐 Best efficiency when all sides equal — i.e. a cube.</p>`;
+                <p> Best efficiency when all sides equal — i.e. a cube.</p>`;
       }
       else if (shape === "triangularPrism") {
         const side = Math.cbrt(volume);
@@ -228,7 +228,7 @@
                 <div class="data-line">Minor Radius (r) = <span class="highlight">${r.toFixed(2)} cm</span></div>
                 <div class="data-line">Major Radius (R) = <span class="highlight">${R.toFixed(2)} cm</span></div>
                 <div class="data-line">Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
-                <p>🌀 Tori look cool, but spheres win the efficiency battle!</p>`;
+                <p>Tori look cool, but spheres win the efficiency battle!</p>`;
       }
 
       output.innerHTML = html;
@@ -236,4 +236,5 @@
   </script>
 </body>
 </html>
+
 
