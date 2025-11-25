@@ -146,7 +146,7 @@
         html = `<h3>Shape: Cube</h3>
                 <div class="data-line">Side = <span class="highlight">${a.toFixed(2)} cm</span></div>
                 <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
-                <p>💡 For the same volume, a <b>sphere</b> would use even less material.</p>`;
+                <p>For the same volume, a <b>sphere</b> would use even less material.</p>`;
       } 
       else if (shape === "cuboid") {
         const a = Math.cbrt(volume);
@@ -154,7 +154,7 @@
         html = `<h3>Shape: Cuboid</h3>
                 <div class="data-line">Optimal Dimensions (L=W=H) = <span class="highlight">${a.toFixed(2)} cm</span></div>
                 <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
-                <p>📦 When all sides are equal, a cuboid becomes a cube for minimal SA.</p>`;
+                <p> When all sides are equal, a cuboid becomes a cube for minimal SA.</p>`;
       } 
       else if (shape === "cylinder") {
         const r = Math.cbrt(volume / (2 * Math.PI));
@@ -164,7 +164,7 @@
                 <div class="data-line">Radius = <span class="highlight">${r.toFixed(2)} cm</span></div>
                 <div class="data-line">Height = <span class="highlight">${h.toFixed(2)} cm</span></div>
                 <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
-                <p>🥫 A sphere of same volume would have lesser surface area than a cylinder.</p>`;
+                <p> A sphere of same volume would have lesser surface area than a cylinder.</p>`;
       } 
       else if (shape === "sphere") {
         const r = Math.cbrt((3 * volume) / (4 * Math.PI));
@@ -184,7 +184,7 @@
                 <div class="data-line">Height = <span class="highlight">${h.toFixed(2)} cm</span></div>
                 <div class="data-line">Slant Height = <span class="highlight">${l.toFixed(2)} cm</span></div>
                 <div class="data-line">Minimum Surface Area = <span class="highlight">${sa.toFixed(2)} cm²</span></div>
-                <p>🍦 A sphere has less SA than a cone for the same volume.</p>`;
+                <p> A sphere has less SA than a cone for the same volume.</p>`;
       } 
       else if (shape === "hemisphere") {
         const r = Math.cbrt((3 * volume) / (2 * Math.PI));
@@ -236,3 +236,4 @@
   </script>
 </body>
 </html>
+
